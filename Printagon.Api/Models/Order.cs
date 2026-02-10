@@ -14,5 +14,7 @@ namespace Printagon.Api.Models
         public OrderStatus OrderStatus { get; set; }
         public string? Comment { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public ICollection<Roll> Rolls { get; set; } = new List<Roll>();
     }
 }
