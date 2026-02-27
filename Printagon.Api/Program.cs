@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
+using Printagon.Api.Data.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    DbSeeder.Seed(context);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
