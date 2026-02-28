@@ -1,4 +1,5 @@
-﻿using Printagon.Api.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Printagon.Api.Data;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories.Interfaces;
 
@@ -14,7 +15,9 @@ namespace Printagon.Api.Repositories
         }
         public async Task<Order?> GetOrderByIdAsync(Guid orderId)
         {
-            throw new NotImplementedException();
+            return await _context.Orders
+                .Include(o => o.Rolls)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public Task<IEnumerable<Order>> GetOrdersAsync()
