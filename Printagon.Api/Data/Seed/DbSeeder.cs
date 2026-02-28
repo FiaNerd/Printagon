@@ -13,13 +13,10 @@ namespace Printagon.Api.Data.Seed
                 return;
             }
 
-            /* -----------
-                ORDERS
-               -----------
-            */
-
+            // ----------- ORDERS -----------
             var order1 = new Order
             {
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 OrderNumber = 123,
                 JobName = "Ica",
                 YearlyNumber = 2,
@@ -28,16 +25,13 @@ namespace Printagon.Api.Data.Seed
                 RollWidth = 1144,
                 OrderStatus = 0,
                 CreatedAt = DateTime.Now,
-                Rolls = new List<Roll> { }
+                Rolls = new List<Roll>()
             };
 
-            /* -----------
-               ROLLS
-              -----------
-           */
-
+            // ----------- ROLLS -----------
             var roll1 = new Roll
             {
+                Id = Guid.NewGuid(),
                 PaperType = "Holmen View HS",
                 GramWeight = 53,
                 RollWidth = 1144,
@@ -47,11 +41,11 @@ namespace Printagon.Api.Data.Seed
                 CreatedBy = Guid.NewGuid(),
                 CreatedAt = DateTime.Now,
                 Orders = new List<Order> { order1 }
-
             };
 
             var roll2 = new Roll
             {
+                Id = Guid.NewGuid(),
                 PaperType = "Holmen View HS",
                 GramWeight = 53,
                 RollWidth = 1144,
@@ -62,10 +56,16 @@ namespace Printagon.Api.Data.Seed
                 CreatedAt = DateTime.Now,
                 Orders = new List<Order> { order1 }
             };
+
+            // Koppla ihop båda sidor
+            order1.Rolls.Add(roll1);
+            order1.Rolls.Add(roll2);
+
+            // Lägg till i DbContext
             context.Orders.Add(order1);
             context.Rolls.AddRange(roll1, roll2);
-            context.SaveChanges();
 
+            context.SaveChanges();
         }
     }
 }

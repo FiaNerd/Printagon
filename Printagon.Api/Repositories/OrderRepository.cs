@@ -15,9 +15,9 @@ namespace Printagon.Api.Repositories
         }
         public async Task<Order?> GetOrderByIdAsync(Guid orderId)
         {
-            return await _context.Orders
-                .Include(o => o.Rolls)
-                .FirstOrDefaultAsync(o => o.Id == orderId);
+           return await _context.Orders
+            .Include(o => o.Rolls)
+            .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public Task<IEnumerable<Order>> GetOrdersAsync()

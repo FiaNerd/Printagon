@@ -1,4 +1,6 @@
-﻿namespace Printagon.Api.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Printagon.Api.Models
 {
     public class Roll
     {
@@ -14,6 +16,7 @@
         public Guid CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        [JsonIgnore]
         public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

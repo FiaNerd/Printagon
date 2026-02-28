@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
+using Printagon.Api.Repositories;
+using Printagon.Api.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
+// Repositories
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
 builder.Services.AddEndpointsApiExplorer();
+
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -49,6 +60,19 @@ app.MapControllers();
 
 app.UseHttpsRedirection();
 
+app.MapGet("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
+{
+    var order = await repo.GetOrderByIdAsync(orderId);
+    if (order == null) return Results.NotFound();
+
+    // Undvik cykliska referenser
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    };
+
+    return Results.Json(order, options);
+});
 
 app.Run();
 
