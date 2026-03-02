@@ -28,6 +28,21 @@ namespace Printagon.Api.Data.Seed
                 Rolls = new List<Roll>()
             };
 
+            // ----------- ORDERS -----------
+            var order2 = new Order
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                OrderNumber = 234,
+                JobName = "Hemmets Journal",
+                YearlyNumber = 1,
+                PaperType = "Skogh papper",
+                GramWeight = 45,
+                RollWidth = 845,
+                OrderStatus = 0,
+                CreatedAt = DateTime.Now,
+                Rolls = new List<Roll>()
+            };
+
             // ----------- ROLLS -----------
             var roll1 = new Roll
             {
@@ -57,13 +72,32 @@ namespace Printagon.Api.Data.Seed
                 Orders = new List<Order> { order1 }
             };
 
+            var roll3= new Roll
+            {
+                Id = Guid.NewGuid(),
+                PaperType = "Holmen View HS",
+                GramWeight = 52,
+                RollWidth = 845,
+                RollNumber = 2,
+                RollWeight = 1000,
+                Comment = "Second roll",
+                CreatedBy = Guid.NewGuid(),
+                CreatedAt = DateTime.Now,
+                Orders = new List<Order> { order2 }
+            };
+
             // Koppla ihop båda sidor
             order1.Rolls.Add(roll1);
+            context.Rolls.AddRange(roll1, roll2);
             order1.Rolls.Add(roll2);
+            order2.Rolls.Add(roll3);
 
             // Lägg till i DbContext
             context.Orders.Add(order1);
-            context.Rolls.AddRange(roll1, roll2);
+            context.Orders.Add(order2);
+
+
+            context.Rolls.AddRange(roll3);
 
             context.SaveChanges();
         }

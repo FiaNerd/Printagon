@@ -74,5 +74,19 @@ app.MapGet("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
     return Results.Json(order, options);
 });
 
+app.MapGet("/order", async (IOrderRepository repo) =>
+{
+    var orders = await repo.GetOrdersAsync();
+
+    Console.WriteLine($"Retrieved {orders.Count()} orders from the repository.");
+
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    };
+
+    return Results.Json(orders, options);
+});
+
 app.Run();
 

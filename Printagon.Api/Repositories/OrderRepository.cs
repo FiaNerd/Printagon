@@ -20,9 +20,11 @@ namespace Printagon.Api.Repositories
             .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
-        public Task<IEnumerable<Order>> GetOrdersAsync()
+        public async Task<IEnumerable<Order>> GetOrdersAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Orders
+                .Include(o => o.Rolls)
+            .ToListAsync();
         }
 
         public Task<Order> CreateOrderAsync(Order order)
