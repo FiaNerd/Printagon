@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
+using Printagon.Api.Models;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 
@@ -86,6 +87,17 @@ app.MapGet("/order", async (IOrderRepository repo) =>
     };
 
     return Results.Json(orders, options);
+});
+
+app.MapPost("/order", async (Order order, IOrderRepository repo) =>
+{
+    var createdOrder = await repo.CreateOrderAsync(order);
+
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    };
+    return Results.Created($"/order/{createdOrder.Id}", createdOrder);
 });
 
 app.Run();

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Printagon.Api.Data;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories.Interfaces;
@@ -27,10 +28,13 @@ namespace Printagon.Api.Repositories
             .ToListAsync();
         }
 
-        public Task<Order> CreateOrderAsync(Order order)
+        public async Task<Order> CreateOrderAsync(Order order)
         {
-            throw new NotImplementedException();
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            return order;
         }
+
         public Task<Order?> UpdateOrderAsync(Order order)
         {
             throw new NotImplementedException();
