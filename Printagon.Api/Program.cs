@@ -100,5 +100,25 @@ app.MapPost("/order", async (Order order, IOrderRepository repo) =>
     return Results.Created($"/order/{createdOrder.Id}", createdOrder);
 });
 
+app.MapPut("/order/{orderId}", async (Guid orderId, Order order, IOrderRepository repo) => {
+    var updatedOrder = await repo.UpdateOrderAsync(orderId, order);
+
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    };
+
+    return Results.Json(updatedOrder, options);
+});
+
+app.MapDelete("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
+{
+    var success = await repo.DeleteOrderAsync(orderId);
+
+    if (!success) return Results.NotFound();
+
+    return Results.NoContent();
+});
+
 app.Run();
 

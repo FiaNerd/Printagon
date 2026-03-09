@@ -32,18 +32,40 @@ namespace Printagon.Api.Repositories
         {
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
+            
             return order;
         }
 
-        public Task<Order?> UpdateOrderAsync(Order order)
+        public async Task<Order?> UpdateOrderAsync(Guid orderId, Order order)
         {
-            throw new NotImplementedException();
+            var existingOrder = await _context.Orders
+                .Include(o => o.Rolls)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (existingOrder == null) 
+            { 
+                return null; 
+            }
+
+            existingOrder.OrderNumber = order.OrderNumber;
+            existingOrder.JobName = order.JobName;
+            existingOrder.YearlyNumber = order.YearlyNumber;
+            existingOrder.PaperType = order.PaperType;
+            existingOrder.GramWeight = order.GramWeight;
+            existingOrder.RollWidth = order.RollWidth;
+            existingOrder.OrderStatus = order.OrderStatus;
+            existingOrder.Comment = order.Comment;
+
+            await _context.SaveChangesAsync();
+
+            return existingOrder;
         }
 
-        public Task<bool> DeleteOrderAsync(Guid orderId)
+        public async Task<bool> DeleteOrderAsync(Guid orderId)
         {
-            throw new NotImplementedException();
-        }
+            _context.Orders.Remove(new Order { Id = orderId });
 
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

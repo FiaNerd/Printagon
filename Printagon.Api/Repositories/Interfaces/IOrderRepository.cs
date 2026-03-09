@@ -7,7 +7,7 @@ namespace Printagon.Api.Repositories.Interfaces
         Task<Order?> GetOrderByIdAsync(Guid orderId);
         Task<IEnumerable<Order>> GetOrdersAsync();
         Task<Order> CreateOrderAsync(Order order);
-        Task<Order?> UpdateOrderAsync(Order order);
+        Task<Order?> UpdateOrderAsync(Guid orderId, Order order);
         Task<bool> DeleteOrderAsync(Guid orderId);
     }
 }
