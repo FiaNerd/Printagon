@@ -77,7 +77,7 @@ app.MapGet("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
 
 app.MapGet("/order", async (IOrderRepository repo) =>
 {
-    var orders = await repo.GetOrdersAsync();
+    var orders = await repo.GetAllOrdersAsync();
 
     Console.WriteLine($"Retrieved {orders.Count()} orders from the repository.");
 
