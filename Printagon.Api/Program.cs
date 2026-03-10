@@ -18,8 +18,15 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
-// Repositories
+/* --------------
+   Repositories
+   -------------- */
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+/* --------------
+   Services
+   -------------- */
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -66,7 +73,6 @@ app.MapGet("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
     var order = await repo.GetOrderByIdAsync(orderId);
     if (order == null) return Results.NotFound();
 
-    // Undvik cykliska referenser
     var options = new System.Text.Json.JsonSerializerOptions
     {
         ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
