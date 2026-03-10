@@ -69,9 +69,10 @@ app.MapControllers();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
+app.MapGet("/order/{orderId}", async (Guid orderId, IOrderService service) =>
 {
-    var order = await repo.GetOrderByIdAsync(orderId);
+    var order = await service.GetOrderByIdAsync(orderId);
+ 
     if (order == null) return Results.NotFound();
 
     var options = new System.Text.Json.JsonSerializerOptions
@@ -82,9 +83,9 @@ app.MapGet("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
     return Results.Json(order, options);
 });
 
-app.MapGet("/order", async (IOrderService repo) =>
+app.MapGet("/order", async (IOrderService service) =>
 {
-    var orders = await repo.GetAllOrdersAsync();
+    var orders = await service.GetAllOrdersAsync();
 
     Console.WriteLine($"Retrieved {orders.Count()} orders from the repository.");
 

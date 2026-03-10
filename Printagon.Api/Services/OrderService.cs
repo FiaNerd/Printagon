@@ -14,7 +14,27 @@ namespace Printagon.Api.Services
 
         public async Task<OrderResponseDto?> GetOrderByIdAsync(Guid orderId)
         {
-            throw new NotImplementedException();
+            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+
+            if (order == null)
+            { 
+                return null;
+            }    
+            
+            var result = new OrderResponseDto
+            {
+                Id = order.Id,
+                OrderNumber = order.OrderNumber,
+                JobName = order.JobName,
+                YearlyNumber = order.YearlyNumber,
+                PaperType = order.PaperType,
+                GramWeight = order.GramWeight,
+                RollWidth = order.RollWidth,
+                OrderStatus = order.OrderStatus,
+                Comment = order.Comment,
+                CreatedAt = order.CreatedAt
+            };
+            return result;
         }
 
 
