@@ -1,18 +1,42 @@
 ﻿using Printagon.Api.DTOs.Order;
+using Printagon.Api.Repositories.Interfaces;
 
 namespace Printagon.Api.Services
 {
     public class OrderService : IOrderService
     {
-        public Task<OrderResponseDto?> GetOrderByIdAsync(Guid orderId)
+        private readonly IOrderRepository _orderRepository;
+
+        public OrderService(IOrderRepository orderRepository)
+        {
+            _orderRepository = orderRepository;
+        }
+
+        public async Task<OrderResponseDto?> GetOrderByIdAsync(Guid orderId)
         {
             throw new NotImplementedException();
         }
 
 
-        public Task<IEnumerable<OrderResponseDto>> GetAllOrdersAsync()
+        public async Task<IEnumerable<OrderResponseDto>> GetAllOrdersAsync()
         {
-            throw new NotImplementedException();
+            var order = await _orderRepository.GetAllOrdersAsync();
+
+            var result = order.Select(o => new OrderResponseDto
+            {
+                Id = o.Id,
+                OrderNumber = o.OrderNumber,
+                JobName = o.JobName,
+                YearlyNumber = o.YearlyNumber,
+                PaperType = o.PaperType,
+                GramWeight = o.GramWeight,
+                RollWidth = o.RollWidth,
+                OrderStatus = o.OrderStatus,
+                Comment = o.Comment,
+                CreatedAt = o.CreatedAt
+            });
+
+            return result;
         }
 
 

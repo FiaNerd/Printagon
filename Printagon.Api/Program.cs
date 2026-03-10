@@ -5,6 +5,7 @@ using Printagon.Api.Data.Seed;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
+using Printagon.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,7 +82,7 @@ app.MapGet("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
     return Results.Json(order, options);
 });
 
-app.MapGet("/order", async (IOrderRepository repo) =>
+app.MapGet("/order", async (IOrderService repo) =>
 {
     var orders = await repo.GetAllOrdersAsync();
 
