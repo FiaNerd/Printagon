@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
+using Printagon.Api.DTOs.Order;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
@@ -81,7 +83,8 @@ app.MapGet("/order/{orderId}", async (Guid orderId, IOrderService service) =>
     };
 
     return Results.Json(order, options);
-});
+})
+    .WithTags("Orders");
 
 app.MapGet("/order", async (IOrderService service) =>
 {
@@ -95,21 +98,28 @@ app.MapGet("/order", async (IOrderService service) =>
     };
 
     return Results.Json(orders, options);
-});
+})
+    .WithTags("Orders");
 
-app.MapPost("/order", async (Order order, IOrderRepository repo) =>
+app.MapPost("/order", async (OrderCreateDto order, IOrderService service) =>
 {
-    var createdOrder = await repo.CreateOrderAsync(order);
+    var createdOrder = await service.CreateOrderAsync(order);
 
     var options = new System.Text.Json.JsonSerializerOptions
     {
         ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
     };
     return Results.Created($"/order/{createdOrder.Id}", createdOrder);
-});
+})
+    .WithTags("Orders");
 
-app.MapPut("/order/{orderId}", async (Guid orderId, Order order, IOrderRepository repo) => {
-    var updatedOrder = await repo.UpdateOrderAsync(orderId, order);
+app.MapPut("/order/{orderId}", async (Guid orderId, OrderUpdateDto order, IOrderService service) => {
+    var updatedOrder = await service.UpdateOrderAsync(orderId, order);
+
+    if(updatedOrder == null)
+    {
+        return Results.NotFound();
+    }
 
     var options = new System.Text.Json.JsonSerializerOptions
     {
@@ -117,16 +127,16 @@ app.MapPut("/order/{orderId}", async (Guid orderId, Order order, IOrderRepositor
     };
 
     return Results.Json(updatedOrder, options);
-});
+})
+    .WithTags("Orders");
 
-app.MapDelete("/order/{orderId}", async (Guid orderId, IOrderRepository repo) =>
+app.MapDelete("/order/{orderId}", async (Guid orderId, IOrderService service) =>
 {
-    var success = await repo.DeleteOrderAsync(orderId);
+    var delete = await service.DeleteOrderAsync(orderId);
 
-    if (!success) return Results.NotFound();
-
-    return Results.NoContent();
-});
+    return delete ? Results.NoContent() : Results.NotFound();
+})
+    .WithTags("Orders");
 
 app.Run();
 
