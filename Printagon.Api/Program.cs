@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+//builder.Services.AddOpenApi();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -63,80 +63,83 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.MapOpenApi();
+    //app.MapOpenApi();
 }
 
 
 app.MapControllers();
 
-app.UseHttpsRedirection();
-
-app.MapGet("/order/{orderId}", async (Guid orderId, IOrderService service) =>
+if (!app.Environment.IsDevelopment())
 {
-    var order = await service.GetOrderByIdAsync(orderId);
- 
-    if (order == null) return Results.NotFound();
+    app.UseHttpsRedirection();
+}
 
-    var options = new System.Text.Json.JsonSerializerOptions
-    {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
+//app.MapGet("/order/{orderId}", async (Guid orderId, IOrderService service) =>
+//{
+//    var order = await service.GetOrderByIdAsync(orderId);
 
-    return Results.Json(order, options);
-})
-    .WithTags("Orders");
+//    if (order == null) return Results.NotFound();
 
-app.MapGet("/order", async (IOrderService service) =>
-{
-    var orders = await service.GetAllOrdersAsync();
+//    var options = new System.Text.Json.JsonSerializerOptions
+//    {
+//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+//    };
 
-    Console.WriteLine($"Retrieved {orders.Count()} orders from the repository.");
+//    return Results.Json(order, options);
+//})
+//    .WithTags("Orders");
 
-    var options = new System.Text.Json.JsonSerializerOptions
-    {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
+//app.MapGet("/order", async (IOrderService service) =>
+//{
+//    var orders = await service.GetAllOrdersAsync();
 
-    return Results.Json(orders, options);
-})
-    .WithTags("Orders");
+//    Console.WriteLine($"Retrieved {orders.Count()} orders from the repository.");
 
-app.MapPost("/order", async (OrderCreateDto order, IOrderService service) =>
-{
-    var createdOrder = await service.CreateOrderAsync(order);
+//    var options = new System.Text.Json.JsonSerializerOptions
+//    {
+//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+//    };
 
-    var options = new System.Text.Json.JsonSerializerOptions
-    {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
-    return Results.Created($"/order/{createdOrder.Id}", createdOrder);
-})
-    .WithTags("Orders");
+//    return Results.Json(orders, options);
+//})
+//    .WithTags("Orders");
 
-app.MapPut("/order/{orderId}", async (Guid orderId, OrderUpdateDto order, IOrderService service) => {
-    var updatedOrder = await service.UpdateOrderAsync(orderId, order);
+//app.MapPost("/order", async (OrderCreateDto order, IOrderService service) =>
+//{
+//    var createdOrder = await service.CreateOrderAsync(order);
 
-    if(updatedOrder == null)
-    {
-        return Results.NotFound();
-    }
+//    var options = new System.Text.Json.JsonSerializerOptions
+//    {
+//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+//    };
+//    return Results.Created($"/order/{createdOrder.Id}", createdOrder);
+//})
+//    .WithTags("Orders");
 
-    var options = new System.Text.Json.JsonSerializerOptions
-    {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
+//app.MapPut("/order/{orderId}", async (Guid orderId, OrderUpdateDto order, IOrderService service) => {
+//    var updatedOrder = await service.UpdateOrderAsync(orderId, order);
 
-    return Results.Json(updatedOrder, options);
-})
-    .WithTags("Orders");
+//    if(updatedOrder == null)
+//    {
+//        return Results.NotFound();
+//    }
 
-app.MapDelete("/order/{orderId}", async (Guid orderId, IOrderService service) =>
-{
-    var delete = await service.DeleteOrderAsync(orderId);
+//    var options = new System.Text.Json.JsonSerializerOptions
+//    {
+//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+//    };
 
-    return delete ? Results.NoContent() : Results.NotFound();
-})
-    .WithTags("Orders");
+//    return Results.Json(updatedOrder, options);
+//})
+//    .WithTags("Orders");
+
+//app.MapDelete("/order/{orderId}", async (Guid orderId, IOrderService service) =>
+//{
+//    var delete = await service.DeleteOrderAsync(orderId);
+
+//    return delete ? Results.NoContent() : Results.NotFound();
+//})
+//    .WithTags("Orders");
 
 app.Run();
 
