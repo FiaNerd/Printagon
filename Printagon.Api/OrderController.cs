@@ -22,5 +22,17 @@ namespace Printagon.Api
             return Ok(orders);
         }
 
+        [HttpGet("{orderId}")]
+        public async Task<IActionResult> GetOrderById(Guid orderId)
+        {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+
+            if (order == null)
+            { 
+                return NotFound(); 
+            }
+            
+            return Ok(order);
+        }
     }
 }
