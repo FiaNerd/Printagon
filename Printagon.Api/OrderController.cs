@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Printagon.Api.DTOs.Order;
+using Printagon.Api.Models;
 
 namespace Printagon.Api
 {
@@ -33,6 +35,14 @@ namespace Printagon.Api
             }
             
             return Ok(order);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto order)
+        {
+            var createdOrder = await _orderService.CreateOrderAsync(order);
+
+            return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrder.Id }, createdOrder);
         }
     }
 }
