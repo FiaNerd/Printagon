@@ -23,6 +23,7 @@ namespace Printagon.Api
 
             return Ok(orders);
         }
+        // GET: api/orders/{orderId}
 
         [HttpGet("{orderId}")]
         public async Task<IActionResult> GetOrderById(Guid orderId)
@@ -37,12 +38,28 @@ namespace Printagon.Api
             return Ok(order);
         }
 
+        // POST: api/orders
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] OrderCreateDto order)
         {
             var createdOrder = await _orderService.CreateOrderAsync(order);
 
             return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrder.Id }, createdOrder);
+        }
+
+        // PUT: api/orders/{orderId}
+
+        [HttpPut("{orderId}")]
+        public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] OrderUpdateDto order)
+        {
+            var updaterOrder = await _orderService.UpdateOrderAsync(orderId, order);
+
+            if (updaterOrder == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updaterOrder);
         }
     }
 }
