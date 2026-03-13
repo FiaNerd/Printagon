@@ -63,9 +63,18 @@ namespace Printagon.Api.Repositories
 
         public async Task<bool> DeleteOrderAsync(Guid orderId)
         {
-            _context.Orders.Remove(new Order { Id = orderId });
+            var order = await _context.Orders.FindAsync(orderId);
 
-            return await _context.SaveChangesAsync() > 0;
+            if (order == null)
+            {
+                return false; 
+            }
+
+             _context.Orders.Remove(order);
+
+            await _context.SaveChangesAsync();
+
+            return true; 
         }
     }
 }
