@@ -1,4 +1,5 @@
 ﻿using Printagon.Api.Models;
+using System.ComponentModel.Design;
 
 namespace Printagon.Api.Data.Seed
 {
@@ -23,7 +24,7 @@ namespace Printagon.Api.Data.Seed
                 PaperType = "Holmen View HS",
                 GramWeight = 53,
                 RollWidth = 1144,
-                OrderStatus = 0,
+                OrderStatus = "Active",
                 CreatedAt = DateTime.Now,
                 Rolls = new List<Roll>()
             };
@@ -38,7 +39,7 @@ namespace Printagon.Api.Data.Seed
                 PaperType = "Skogh papper",
                 GramWeight = 45,
                 RollWidth = 845,
-                OrderStatus = 0,
+                OrderStatus = "Paused",
                 CreatedAt = DateTime.Now,
                 Rolls = new List<Roll>()
             };
