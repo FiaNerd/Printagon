@@ -61,5 +61,18 @@ namespace Printagon.Api
 
             return Ok(updaterOrder);
         }
+
+        [HttpDelete("{orderId}")]
+        public async Task<IActionResult> DeleteOrder(Guid orderId)
+        {
+            var deleteOrder = await _orderService.DeleteOrderAsync(orderId);
+
+            if(deleteOrder == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }
