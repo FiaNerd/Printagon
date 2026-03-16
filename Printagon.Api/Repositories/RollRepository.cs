@@ -2,6 +2,7 @@
 using Printagon.Api.Data;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories.Interfaces;
+using System;
 
 namespace Printagon.Api.Repositories
 {
@@ -23,7 +24,11 @@ namespace Printagon.Api.Repositories
 
         public Task<Roll?> GetRollByIdAsync(Guid rollId)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"Fetching roll with ID: {rollId}");
+
+            return _context.Rolls
+                .Include(r => r.Orders)
+                .FirstOrDefaultAsync(r => r.Id == rollId);
         }
 
         public Task<Roll> CreateRollAsync(Roll roll)

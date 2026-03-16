@@ -85,23 +85,26 @@ app.MapGet("/rolls", async (IRollRepository repo) =>
 
     return Results.Json(rolls, options);
 })
-    .WithTags("Orders");
+    .WithTags("Rolls");
 
 
-//app.MapGet("/order/{orderId}", async (Guid orderId, IOrderService service) =>
-//{
-//    var order = await service.GetOrderByIdAsync(orderId);
+app.MapGet("/rolls/{rollId}", async (Guid rollId, IRollRepository repo) =>
+{
+    var roll = await repo.GetRollByIdAsync(rollId);
 
-//    if (order == null) return Results.NotFound();
+    if (roll == null)
+    {
+        return Results.NotFound();
+    }
 
-//    var options = new System.Text.Json.JsonSerializerOptions
-//    {
-//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-//    };
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    };
 
-//    return Results.Json(order, options);
-//})
-//    .WithTags("Orders");
+    return Results.Json(roll, options);
+})
+    .WithTags("Rolls");
 
 
 //app.MapPost("/order", async (OrderCreateDto order, IOrderService service) =>

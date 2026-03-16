@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Printagon.Api.Data;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories.Interfaces;
