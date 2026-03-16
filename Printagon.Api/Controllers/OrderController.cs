@@ -2,7 +2,7 @@
 using Printagon.Api.DTOs.Order;
 using Printagon.Api.Models;
 
-namespace Printagon.Api
+namespace Printagon.Api.Controllers
 {
     [Route("api/orders")]
     [ApiController]
@@ -67,7 +67,7 @@ namespace Printagon.Api
         {
             var deleteOrder = await _orderService.DeleteOrderAsync(orderId);
 
-            if(deleteOrder == null)
+            if(deleteOrder == false)
             {
                 return NotFound();
             }

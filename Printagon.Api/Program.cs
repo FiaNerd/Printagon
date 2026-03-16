@@ -1,10 +1,7 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
-using Printagon.Api.DTOs.Order;
-using Printagon.Api.Models;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services;
@@ -25,6 +22,7 @@ builder.Services.AddControllers()
    Repositories
    -------------- */
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IRollRepository, RollRepository>();
 
 /* --------------
    Services
@@ -74,6 +72,22 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.MapGet("/rolls", async (IRollRepository repo) =>
+{
+    var rolls = await repo.GetAllRollsAsync();
+
+    Console.WriteLine($"Retrieved {rolls.Count()} rolls from the repository.");
+
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    };
+
+    return Results.Json(rolls, options);
+})
+    .WithTags("Orders");
+
+
 //app.MapGet("/order/{orderId}", async (Guid orderId, IOrderService service) =>
 //{
 //    var order = await service.GetOrderByIdAsync(orderId);
@@ -89,20 +103,6 @@ if (!app.Environment.IsDevelopment())
 //})
 //    .WithTags("Orders");
 
-//app.MapGet("/order", async (IOrderService service) =>
-//{
-//    var orders = await service.GetAllOrdersAsync();
-
-//    Console.WriteLine($"Retrieved {orders.Count()} orders from the repository.");
-
-//    var options = new System.Text.Json.JsonSerializerOptions
-//    {
-//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-//    };
-
-//    return Results.Json(orders, options);
-//})
-//    .WithTags("Orders");
 
 //app.MapPost("/order", async (OrderCreateDto order, IOrderService service) =>
 //{
