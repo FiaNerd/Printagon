@@ -39,9 +39,25 @@ namespace Printagon.Api.Repositories
             return roll;
         }
 
-        public Task<Roll?> UpdateRollAsync(Guid rollId, Roll updatedRoll)
+        public async Task<Roll?> UpdateRollAsync(Guid rollId, Roll updatedRoll)
         {
-            throw new NotImplementedException();
+            var existingRoll = await _context.Rolls.FindAsync(rollId);
+
+            if (existingRoll == null)
+            {
+                return null;
+            }
+
+            existingRoll.PaperType = updatedRoll.PaperType;
+            existingRoll.GramWeight = updatedRoll.GramWeight;
+            existingRoll.RollWidth = updatedRoll.RollWidth;
+            existingRoll.RollNumber = updatedRoll.RollNumber;
+            existingRoll.RollWeight = updatedRoll.RollWeight;
+            existingRoll.Comment = updatedRoll.Comment;
+
+            await _context.SaveChangesAsync();
+
+            return existingRoll;
         }
 
         public Task<bool> DeleteRollAsync(Guid rollId)

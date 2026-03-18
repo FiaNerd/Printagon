@@ -121,22 +121,25 @@ app.MapPost("/rolls", async (Roll roll, IRollRepository repo) =>
 })
     .WithTags("Rolls");
 
-//app.MapPut("/order/{orderId}", async (Guid orderId, OrderUpdateDto order, IOrderService service) => {
-//    var updatedOrder = await service.UpdateOrderAsync(orderId, order);
+app.MapPut("/rolls/{rollId}", async (Guid rollId, Roll roll, IRollRepository repo) =>
+{
+    var updateRoll = await repo.UpdateRollAsync(rollId, roll);
 
-//    if(updatedOrder == null)
-//    {
-//        return Results.NotFound();
-//    }
+    if (updateRoll == null)
+    {
+        return Results.NotFound();
+    }
 
-//    var options = new System.Text.Json.JsonSerializerOptions
-//    {
-//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-//    };
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    };
 
-//    return Results.Json(updatedOrder, options);
-//})
-//    .WithTags("Orders");
+    Console.WriteLine($"Updated roll with ID: {updateRoll.Id}");
+
+    return Results.Json(updateRoll, options);
+})
+    .WithTags("Rolls");
 
 //app.MapDelete("/order/{orderId}", async (Guid orderId, IOrderService service) =>
 //{
