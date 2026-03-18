@@ -60,9 +60,21 @@ namespace Printagon.Api.Repositories
             return existingRoll;
         }
 
-        public Task<bool> DeleteRollAsync(Guid rollId)
+        public async Task<bool> DeleteRollAsync(Guid rollId)
         {
-            throw new NotImplementedException();
+            var roll = await _context.Rolls.FindAsync(rollId);
+
+            if (rollId == null)
+            { 
+                return false;
+            }
+
+            _context.Rolls.Remove(roll);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+
         }
 
 

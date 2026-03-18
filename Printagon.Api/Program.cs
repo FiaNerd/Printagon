@@ -141,13 +141,13 @@ app.MapPut("/rolls/{rollId}", async (Guid rollId, Roll roll, IRollRepository rep
 })
     .WithTags("Rolls");
 
-//app.MapDelete("/order/{orderId}", async (Guid orderId, IOrderService service) =>
-//{
-//    var delete = await service.DeleteOrderAsync(orderId);
+app.MapDelete("/rolls/{rollId}", async (Guid rollId, IRollRepository repo) =>
+{
+    var delete = await repo.DeleteRollAsync(rollId);
 
-//    return delete ? Results.NoContent() : Results.NotFound();
-//})
-//    .WithTags("Orders");
+    return delete ? Results.NoContent() : Results.NotFound();
+})
+    .WithTags("Rolls");
 
 app.Run();
 
