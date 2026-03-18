@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
+using Printagon.Api.Models;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services;
@@ -107,17 +108,18 @@ app.MapGet("/rolls/{rollId}", async (Guid rollId, IRollRepository repo) =>
     .WithTags("Rolls");
 
 
-//app.MapPost("/order", async (OrderCreateDto order, IOrderService service) =>
-//{
-//    var createdOrder = await service.CreateOrderAsync(order);
 
-//    var options = new System.Text.Json.JsonSerializerOptions
-//    {
-//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-//    };
-//    return Results.Created($"/order/{createdOrder.Id}", createdOrder);
-//})
-//    .WithTags("Orders");
+app.MapPost("/rolls", async (Roll roll, IRollRepository repo) =>
+{
+    var createRoll = await repo.CreateRollAsync(roll);
+
+    var options = new System.Text.Json.JsonSerializerOptions
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    };
+    return Results.Created($"/order/{createRoll.Id}", createRoll);
+})
+    .WithTags("Rolls");
 
 //app.MapPut("/order/{orderId}", async (Guid orderId, OrderUpdateDto order, IOrderService service) => {
 //    var updatedOrder = await service.UpdateOrderAsync(orderId, order);

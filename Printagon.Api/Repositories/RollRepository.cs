@@ -22,18 +22,21 @@ namespace Printagon.Api.Repositories
                 .ToListAsync();
         }
 
-        public Task<Roll?> GetRollByIdAsync(Guid rollId)
+        public async Task<Roll?> GetRollByIdAsync(Guid rollId)
         {
             Console.WriteLine($"Fetching roll with ID: {rollId}");
 
-            return _context.Rolls
+            return await _context.Rolls
                 .Include(r => r.Orders)
                 .FirstOrDefaultAsync(r => r.Id == rollId);
         }
 
-        public Task<Roll> CreateRollAsync(Roll roll)
+        public async Task<Roll> CreateRollAsync(Roll roll)
         {
-            throw new NotImplementedException();
+            await _context.Rolls.AddAsync(roll);
+            await _context.SaveChangesAsync();
+
+            return roll;
         }
 
         public Task<Roll?> UpdateRollAsync(Guid rollId, Roll updatedRoll)
