@@ -6,6 +6,7 @@ using Printagon.Api.Models;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services;
+using Printagon.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IRollRepository, RollRepository>();
    Services
    -------------- */
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IRollService, RollService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -73,11 +75,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.MapGet("/rolls", async (IRollRepository repo) =>
+app.MapGet("/rolls", async (IRollService service) =>
 {
-    var rolls = await repo.GetAllRollsAsync();
+    var rolls = await service.GetAllRollsAsync();
 
-    Console.WriteLine($"Retrieved {rolls.Count()} rolls from the repository.");
+    Console.WriteLine($"Retrieved {rolls.Count()} rolls from the service layer.");
 
     var options = new System.Text.Json.JsonSerializerOptions
     {
