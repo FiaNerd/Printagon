@@ -1,5 +1,4 @@
 ﻿using Printagon.Api.DTOs.Order;
-using Printagon.Api.Enums;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories.Interfaces;
 
@@ -62,11 +61,6 @@ namespace Printagon.Api.Services
 
         public async Task<OrderResponseDto> CreateOrderAsync(OrderCreateDto orderCreateDto)
         {
-            if (!Enum.TryParse<OrderStatus>(orderCreateDto.OrderStatus, true, out var status))
-            { 
-                throw new ArgumentException($"Invalid order status: {orderCreateDto.OrderStatus}");
-            }
-
            var order  = new Order
            {
                 Id = Guid.NewGuid(),
@@ -76,7 +70,7 @@ namespace Printagon.Api.Services
                 PaperType = orderCreateDto.PaperType,
                 GramWeight = orderCreateDto.GramWeight,
                 RollWidth = orderCreateDto.RollWidth,
-                OrderStatus = status.ToString(),
+                OrderStatus = orderCreateDto.OrderStatus,
                 Comment = orderCreateDto.Comment,
                 CreatedAt = DateTime.UtcNow
            };
@@ -108,19 +102,13 @@ namespace Printagon.Api.Services
             {
                 return null;
             }
-
-            if(!Enum.TryParse<OrderStatus>(orderUpdateDto.OrderStatus, true, out var status))
-            {                 
-                throw new ArgumentException($"Invalid order status: {orderUpdateDto.OrderStatus}");
-            }
-
             existingOrder.OrderNumber = orderUpdateDto.OrderNumber;
             existingOrder.JobName = orderUpdateDto.JobName;
             existingOrder.YearlyNumber = orderUpdateDto.YearlyNumber;
             existingOrder.PaperType = orderUpdateDto.PaperType;
             existingOrder.GramWeight = orderUpdateDto.GramWeight;
             existingOrder.RollWidth = orderUpdateDto.RollWidth;
-            existingOrder.OrderStatus = status.ToString();
+            existingOrder.OrderStatus = orderUpdateDto.OrderStatus;
             existingOrder.Comment = orderUpdateDto.Comment;
 
             var updatedOrder = await _orderRepository.UpdateOrderAsync(orderId, existingOrder);

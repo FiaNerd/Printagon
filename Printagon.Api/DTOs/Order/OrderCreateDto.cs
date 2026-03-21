@@ -23,7 +23,7 @@ namespace Printagon.Api.DTOs.Order
 
 
         [Required]
-        public string OrderStatus { get; set; } = string.Empty;
+        public OrderStatus OrderStatus { get; set; }
         public string? Comment { get; set; }
 
     }

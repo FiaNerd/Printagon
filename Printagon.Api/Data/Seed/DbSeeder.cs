@@ -1,5 +1,5 @@
-﻿using Printagon.Api.Models;
-using System.ComponentModel.Design;
+﻿using Printagon.Api.Enums;
+using Printagon.Api.Models;
 
 namespace Printagon.Api.Data.Seed
 {
@@ -24,7 +24,7 @@ namespace Printagon.Api.Data.Seed
                 PaperType = "Holmen View HS",
                 GramWeight = 53,
                 RollWidth = 1144,
-                OrderStatus = "Active",
+                OrderStatus =  OrderStatus.Active,
                 CreatedAt = DateTime.Now,
                 Rolls = new List<Roll>()
             };
@@ -39,7 +39,21 @@ namespace Printagon.Api.Data.Seed
                 PaperType = "Skogh papper",
                 GramWeight = 45,
                 RollWidth = 845,
-                OrderStatus = "Paused",
+                OrderStatus = OrderStatus.Paused,
+                CreatedAt = DateTime.Now,
+                Rolls = new List<Roll>()
+            };
+
+            var order3 = new Order
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                OrderNumber = 234,
+                JobName = "Hemmets Journal",
+                YearlyNumber = 1,
+                PaperType = "Skogh papper",
+                GramWeight = 45,
+                RollWidth = 845,
+                OrderStatus = OrderStatus.Completed,
                 CreatedAt = DateTime.Now,
                 Rolls = new List<Roll>()
             };
