@@ -1,4 +1,5 @@
-﻿using Printagon.Api.Models;
+﻿using Printagon.Api.DTOs.Roll;
+using Printagon.Api.Models;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services.Interfaces;
 
@@ -13,10 +14,23 @@ namespace Printagon.Api.Services
             _rollRepo = rollRepo;
         }
 
-        public async Task<IEnumerable<Roll>> GetAllRollsAsync()
-        {
-            return await _rollRepo.GetAllRollsAsync();
-        }
+            public async Task<IEnumerable<RollResponseDto>> GetAllRollsAsync()
+            {
+                var rolls = await _rollRepo.GetAllRollsAsync();
+
+                return rolls.Select(r => new RollResponseDto
+                {
+                    RollNumber = r.RollNumber,
+                    PaperType = r.PaperType,
+                    GramWeight = r.GramWeight,
+                    RollWidth = r.RollWidth,
+                    RollWeight = r.RollWeight,
+                    RollWeightLeftOver = r.RollWeightLeftOver,
+                    Comment = r.Comment,
+                    CreatedBy = r.CreatedBy,
+                    CreatedAt = r.CreatedAt
+                });
+            }
 
         public async Task<Roll?> GetRollByIdAsync(Guid rollId)
         {
