@@ -91,9 +91,9 @@ app.MapGet("/rolls", async (IRollService service) =>
     .WithTags("Rolls");
 
 
-app.MapGet("/rolls/{rollId}", async (Guid rollId, IRollRepository repo) =>
+app.MapGet("/rolls/{rollId}", async (Guid rollId, IRollService service) =>
 {
-    var roll = await repo.GetRollByIdAsync(rollId);
+    var roll = await service.GetRollByIdAsync(rollId);
 
     if (roll == null)
     {

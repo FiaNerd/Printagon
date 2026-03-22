@@ -1,6 +1,7 @@
 ﻿using Printagon.Api.Enums;
 using Printagon.Api.Models;
 
+
 namespace Printagon.Api.Data.Seed
 {
     public class DbSeeder
@@ -95,6 +96,7 @@ namespace Printagon.Api.Data.Seed
                 RollWidth = 845,
                 RollNumber = 2,
                 RollWeight = 1000,
+                RollWeightLeftOver = 500,
                 Comment = "Second roll",
                 CreatedBy = Guid.NewGuid(),
                 CreatedAt = DateTime.Now,

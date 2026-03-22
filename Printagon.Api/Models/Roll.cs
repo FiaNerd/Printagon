@@ -10,6 +10,8 @@ namespace Printagon.Api.Models
         public int? RollWidth { get; set; }
         public int RollNumber { get; set; }
         public int RollWeight { get; set; }
+        public int? RollWeightLeftOver { get; set; }
+
         public string? Comment { get; set; }
         public Guid CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

@@ -18,9 +18,16 @@ namespace Printagon.Api.Services
             return await _rollRepo.GetAllRollsAsync();
         }
 
-        public Task<Roll?> GetRollByIdAsync(Guid rollId)
+        public async Task<Roll?> GetRollByIdAsync(Guid rollId)
         {
-            throw new NotImplementedException();
+           var roll = await _rollRepo.GetRollByIdAsync(rollId);
+
+            if (roll == null)
+            { 
+                throw new KeyNotFoundException($"Roll with ID {rollId} not found.");
+            }
+
+            return roll;
         }
 
         public Task<Roll> CreateRollAsync(Roll roll)
