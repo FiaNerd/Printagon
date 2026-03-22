@@ -18,21 +18,22 @@ namespace Printagon.Api.Services
             {
                 var rolls = await _rollRepo.GetAllRollsAsync();
 
-                return rolls.Select(r => new RollResponseDto
-                {
-                    RollNumber = r.RollNumber,
-                    PaperType = r.PaperType,
-                    GramWeight = r.GramWeight,
-                    RollWidth = r.RollWidth,
-                    RollWeight = r.RollWeight,
-                    RollWeightLeftOver = r.RollWeightLeftOver,
-                    Comment = r.Comment,
-                    CreatedBy = r.CreatedBy,
-                    CreatedAt = r.CreatedAt
-                });
-            }
+                    return rolls.Select(r => new RollResponseDto
+                    {
+                        Id = r.Id,
+                        RollNumber = r.RollNumber,
+                        PaperType = r.PaperType,
+                        GramWeight = r.GramWeight,
+                        RollWidth = r.RollWidth,
+                        RollWeight = r.RollWeight,
+                        RollWeightLeftOver = r.RollWeightLeftOver,
+                        Comment = r.Comment,
+                        CreatedBy = r.CreatedBy,
+                        CreatedAt = r.CreatedAt
+                    });
+                }
 
-        public async Task<Roll?> GetRollByIdAsync(Guid rollId)
+        public async Task<RollResponseDto?> GetRollByIdAsync(Guid rollId)
         {
            var roll = await _rollRepo.GetRollByIdAsync(rollId);
 
@@ -41,7 +42,21 @@ namespace Printagon.Api.Services
                 throw new KeyNotFoundException($"Roll with ID {rollId} not found.");
             }
 
-            return roll;
+            var rollResponse = new RollResponseDto
+            {
+                Id = roll.Id,
+                RollNumber = roll.RollNumber,
+                PaperType = roll.PaperType,
+                GramWeight = roll.GramWeight,
+                RollWidth = roll.RollWidth,
+                RollWeight = roll.RollWeight,
+                RollWeightLeftOver = roll.RollWeightLeftOver,
+                Comment = roll.Comment,
+                CreatedBy = roll.CreatedBy,
+                CreatedAt = roll.CreatedAt
+            };
+
+            return rollResponse;
         }
 
         public Task<Roll> CreateRollAsync(Roll roll)
