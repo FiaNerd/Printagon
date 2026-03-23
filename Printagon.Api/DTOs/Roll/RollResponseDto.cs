@@ -10,7 +10,7 @@
         public int RollWeight { get; set; }
         public int? RollWeightLeftOver { get; set; }
         public string? Comment { get; set; }
-        public Guid CreatedBy { get; set; }
+        public Guid? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
