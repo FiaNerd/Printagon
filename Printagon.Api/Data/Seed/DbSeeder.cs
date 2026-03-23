@@ -97,7 +97,7 @@ namespace Printagon.Api.Data.Seed
                 RollNumber = 2,
                 RollWeight = 1000,
                 RollWeightLeftOver = 500,
-                Comment = "Second roll",
+                Comment = "Third roll",
                 CreatedBy = Guid.NewGuid(),
                 CreatedAt = DateTime.Now,
                 Orders = new List<Order> { order2 }

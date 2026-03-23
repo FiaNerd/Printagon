@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
+using Printagon.Api.DTOs.Roll;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
@@ -111,17 +112,14 @@ app.MapGet("/rolls/{rollId}", async (Guid rollId, IRollService service) =>
 
 
 
-app.MapPost("/rolls", async (Roll roll, IRollRepository repo) =>
+app.MapPost("/orders/{orderId}/rolls", async (Guid orderId, RollCreateDto dto, IRollService service) =>
 {
-    var createRoll = await repo.CreateRollAsync(roll);
+    var createdRoll = await service.CreateRollAsync(orderId, dto);
 
-    var options = new System.Text.Json.JsonSerializerOptions
-    {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
-    return Results.Created($"/order/{createRoll.Id}", createRoll);
+    return Results.Created($"/orders/{orderId}/rolls/{createdRoll.Id}", createdRoll);
 })
-    .WithTags("Rolls");
+.WithTags("Rolls");
+
 
 app.MapPut("/rolls/{rollId}", async (Guid rollId, Roll roll, IRollRepository repo) =>
 {
