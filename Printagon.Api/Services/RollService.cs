@@ -8,10 +8,12 @@ namespace Printagon.Api.Services
     public class RollService : IRollService
     {
         private readonly IRollRepository _rollRepo;
+        private readonly IOrderRepository _orderRepo;
 
-        public RollService(IRollRepository rollRepo)
+        public RollService(IRollRepository rollRepo, IOrderRepository orderRepo)
         {
             _rollRepo = rollRepo;
+            _orderRepo = orderRepo;
         }
 
             public async Task<IEnumerable<RollResponseDto>> GetAllRollsAsync()
@@ -52,16 +54,54 @@ namespace Printagon.Api.Services
                 RollWeight = roll.RollWeight,
                 RollWeightLeftOver = roll.RollWeightLeftOver,
                 Comment = roll.Comment,
-                CreatedBy = roll.CreatedBy,
+                CreatedBy = null,
                 CreatedAt = roll.CreatedAt
             };
 
             return rollResponse;
         }
 
-        public Task<Roll> CreateRollAsync(Roll roll)
+        public async Task<RollResponseDto> CreateRollAsync(Guid orderId, RollCreateDto roll)
         {
-            throw new NotImplementedException();
+            var order = await _orderRepo.GetOrderByIdAsync(orderId);
+            
+            if (order == null)
+            {
+                throw new KeyNotFoundException($"Order with ID {orderId} not found.");
+            }
+
+            var newRoll = new Roll
+            {
+                Id = Guid.NewGuid(),
+                RollNumber = roll.RollNumber,
+                RollWeight = roll.RollWeight,
+                RollWeightLeftOver = roll.RollWeightLeftOver,
+                Comment = roll.Comment,
+
+                PaperType = roll.PaperTypeOverride ?? order.PaperType,
+                GramWeight = roll.GramWeightOverride ?? order.GramWeight,
+                RollWidth = roll.RollWidthOverride ?? order.RollWidth,
+
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var createdRoll = await _rollRepo.CreateRollAsync(newRoll);
+
+            var rollResponse = new RollResponseDto
+            {
+                Id = newRoll.Id,
+                RollNumber = newRoll.RollNumber,
+                PaperType = newRoll.PaperType,
+                GramWeight = newRoll.GramWeight,
+                RollWidth = newRoll.RollWidth,
+                RollWeight = newRoll.RollWeight,
+                RollWeightLeftOver = newRoll.RollWeightLeftOver,
+                Comment = newRoll.Comment,
+                CreatedBy = null,
+                CreatedAt = newRoll.CreatedAt
+            };
+
+            return rollResponse;
         }
 
       
