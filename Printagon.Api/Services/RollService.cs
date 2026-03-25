@@ -152,9 +152,16 @@ namespace Printagon.Api.Services
 
         }
 
-        public Task<bool?> DeleteRollAsync(Guid rollId)
+        public async Task DeleteRollAsync(Guid rollId)
         {
-            throw new NotImplementedException();
+            var roll = await _rollRepo.GetRollByIdAsync(rollId);
+
+            if (roll == null)
+            {
+                throw new KeyNotFoundException($"Roll with ID {rollId} not found.");
+            }
+             
+            await _rollRepo.DeleteRollAsync(rollId);
         }
 
     }

@@ -1,13 +1,12 @@
+using Printagon.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
 using Printagon.Api.DTOs.Roll;
-using Printagon.Api.Models;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services;
-using Printagon.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -141,13 +140,25 @@ app.MapPut("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId,
 })
     .WithTags("Rolls");
 
-app.MapDelete("/rolls/{rollId}", async (Guid rollId, IRollRepository repo) =>
-{
-    var delete = await repo.DeleteRollAsync(rollId);
 
-    return delete ? Results.NoContent() : Results.NotFound();
-})
-    .WithTags("Rolls");
+
+app.MapDelete("/rolls/{rollId}", async (string rollId, IRollService service) =>
+{
+    if (!Guid.TryParse(rollId, out var parsedId))
+    {
+        return Results.BadRequest("Invalid GUID format.");
+    }
+
+    try
+    {
+        await service.DeleteRollAsync(parsedId);
+        return Results.NoContent();
+    }
+    catch (KeyNotFoundException)
+    {
+        return Results.NotFound();
+    }
+});
 
 app.Run();
 
