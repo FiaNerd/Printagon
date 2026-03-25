@@ -121,9 +121,9 @@ app.MapPost("/orders/{orderId}/rolls", async (Guid orderId, RollCreateDto dto, I
 .WithTags("Rolls");
 
 
-app.MapPut("/rolls/{rollId}", async (Guid rollId, Roll roll, IRollRepository repo) =>
+app.MapPut("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId, RollUpdateDto roll, IRollService service) =>
 {
-    var updateRoll = await repo.UpdateRollAsync(rollId, roll);
+    var updateRoll = await service.UpdateRollAsync(orderId, rollId, roll);
 
     if (updateRoll == null)
     {

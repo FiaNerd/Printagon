@@ -25,8 +25,8 @@ namespace Printagon.Api.Services
                         Id = r.Id,
                         RollNumber = r.RollNumber,
                         PaperType = r.PaperType,
-                        GramWeight = r.GramWeight,
-                        RollWidth = r.RollWidth,
+                        PaperGramWeight = r.PaperGramWeight,
+                        PaperWidth = r.PaperWidth,
                         RollWeight = r.RollWeight,
                         RollWeightLeftOver = r.RollWeightLeftOver,
                         Comment = r.Comment,
@@ -49,8 +49,8 @@ namespace Printagon.Api.Services
                 Id = roll.Id,
                 RollNumber = roll.RollNumber,
                 PaperType = roll.PaperType,
-                GramWeight = roll.GramWeight,
-                RollWidth = roll.RollWidth,
+                PaperGramWeight = roll.PaperGramWeight,
+                PaperWidth = roll.PaperWidth,
                 RollWeight = roll.RollWeight,
                 RollWeightLeftOver = roll.RollWeightLeftOver,
                 Comment = roll.Comment,
@@ -79,8 +79,8 @@ namespace Printagon.Api.Services
                 Comment = roll.Comment,
 
                 PaperType = roll.PaperTypeOverride ?? order.PaperType,
-                GramWeight = roll.GramWeightOverride ?? order.GramWeight,
-                RollWidth = roll.RollWidthOverride ?? order.RollWidth,
+                PaperGramWeight = roll.PaperGramWeightOverride ?? order.PaperGramWeight,
+                PaperWidth = roll.RollWidthOverride ?? order.PaperWidth,
 
                 CreatedAt = DateTime.UtcNow
             };
@@ -92,8 +92,8 @@ namespace Printagon.Api.Services
                 Id = newRoll.Id,
                 RollNumber = newRoll.RollNumber,
                 PaperType = newRoll.PaperType,
-                GramWeight = newRoll.GramWeight,
-                RollWidth = newRoll.RollWidth,
+                PaperGramWeight = newRoll.PaperGramWeight,
+                PaperWidth = newRoll.PaperWidth,
                 RollWeight = newRoll.RollWeight,
                 RollWeightLeftOver = newRoll.RollWeightLeftOver,
                 Comment = newRoll.Comment,
@@ -105,9 +105,51 @@ namespace Printagon.Api.Services
         }
 
       
-        public Task<Roll?> UpdateRollAsync(Guid rollId, Roll updatedRoll)
+        public async Task<RollResponseDto?> UpdateRollAsync(Guid orderId, Guid rollId, RollUpdateDto updatedRoll)
         {
-            throw new NotImplementedException();
+            var order = await _orderRepo.GetOrderByIdAsync(orderId);
+
+            if (order == null)
+            {
+                throw new KeyNotFoundException($"Order with ID {orderId} not found.");
+            }
+
+            var existingRoll = await _rollRepo.GetRollByIdAsync(rollId);
+
+            if(existingRoll == null) 
+            { 
+                throw new KeyNotFoundException($"Roll with ID {rollId} not found.");
+            }
+
+
+            existingRoll.RollNumber = updatedRoll.RollNumber;
+            existingRoll.RollWeight = updatedRoll.RollWeight;
+            existingRoll.RollWeightLeftOver = updatedRoll.RollWeightLeftOver;
+            existingRoll.Comment = updatedRoll.Comment;
+
+            existingRoll.PaperType = updatedRoll.PaperType ?? existingRoll.PaperType;
+            existingRoll.PaperGramWeight = updatedRoll.PaperGramWeight ?? existingRoll.PaperGramWeight;
+            existingRoll.PaperWidth = updatedRoll.PaperWidth ?? existingRoll.PaperWidth;
+
+
+            var updated = await _rollRepo.UpdateRollAsync(existingRoll);
+
+           var newResponse = new RollResponseDto
+            {
+                Id = updated.Id,
+                RollNumber = updated.RollNumber,
+                PaperType = updated.PaperType,
+                PaperGramWeight = updated.PaperGramWeight,
+                PaperWidth = updated.PaperWidth,
+                RollWeight = updated.RollWeight,
+                RollWeightLeftOver = updated.RollWeightLeftOver,
+                Comment = updated.Comment,
+                CreatedBy = null,
+                CreatedAt = updated.CreatedAt
+            };
+
+            return newResponse;
+
         }
 
         public Task<bool?> DeleteRollAsync(Guid rollId)

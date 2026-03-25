@@ -8,7 +8,7 @@ namespace Printagon.Api.Services.Interfaces
         Task<IEnumerable<RollResponseDto>> GetAllRollsAsync();
         Task<RollResponseDto?> GetRollByIdAsync(Guid rollId);
         Task<RollResponseDto> CreateRollAsync(Guid orerId, RollCreateDto createRoll);
-        Task<Roll?> UpdateRollAsync(Guid rollId, Roll updatedRoll);
+        Task<RollResponseDto?> UpdateRollAsync(Guid orderId, Guid rollId, RollUpdateDto updatedRoll);
         Task<bool?> DeleteRollAsync(Guid rollId);
     }
 }

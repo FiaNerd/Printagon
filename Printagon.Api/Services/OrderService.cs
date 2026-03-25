@@ -29,8 +29,8 @@ namespace Printagon.Api.Services
                 JobName = order.JobName,
                 YearlyNumber = order.YearlyNumber,
                 PaperType = order.PaperType,
-                GramWeight = order.GramWeight,
-                RollWidth = order.RollWidth,
+                PaperGramWeight = order.PaperGramWeight,
+                PaperWidth = order.PaperWidth,
                 OrderStatus = order.OrderStatus,
                 Comment = order.Comment,
                 CreatedAt = order.CreatedAt
@@ -49,8 +49,8 @@ namespace Printagon.Api.Services
                 JobName = o.JobName,
                 YearlyNumber = o.YearlyNumber,
                 PaperType = o.PaperType,
-                GramWeight = o.GramWeight,
-                RollWidth = o.RollWidth,
+                PaperGramWeight = o.PaperGramWeight,
+                PaperWidth = o.PaperWidth,
                 OrderStatus = o.OrderStatus,
                 Comment = o.Comment,
                 CreatedAt = o.CreatedAt
@@ -68,8 +68,8 @@ namespace Printagon.Api.Services
                 JobName = orderCreateDto.JobName,
                 YearlyNumber = orderCreateDto.YearlyNumber,
                 PaperType = orderCreateDto.PaperType,
-                GramWeight = orderCreateDto.GramWeight,
-                RollWidth = orderCreateDto.RollWidth,
+                PaperGramWeight = orderCreateDto.PaperGramWeight,
+                PaperWidth = orderCreateDto.PaperWidth,
                 OrderStatus = orderCreateDto.OrderStatus,
                 Comment = orderCreateDto.Comment,
                 CreatedAt = DateTime.UtcNow
@@ -84,8 +84,8 @@ namespace Printagon.Api.Services
                 JobName = createdOrder.JobName,
                 YearlyNumber = createdOrder.YearlyNumber,
                 PaperType = createdOrder.PaperType,
-                GramWeight = createdOrder.GramWeight,
-                RollWidth = createdOrder.RollWidth,
+                PaperGramWeight = createdOrder.PaperGramWeight,
+                PaperWidth = createdOrder.PaperWidth,
                 OrderStatus = createdOrder.OrderStatus,
                 Comment = createdOrder.Comment,
                 CreatedAt = createdOrder.CreatedAt
@@ -106,8 +106,8 @@ namespace Printagon.Api.Services
             existingOrder.JobName = orderUpdateDto.JobName;
             existingOrder.YearlyNumber = orderUpdateDto.YearlyNumber;
             existingOrder.PaperType = orderUpdateDto.PaperType;
-            existingOrder.GramWeight = orderUpdateDto.GramWeight;
-            existingOrder.RollWidth = orderUpdateDto.RollWidth;
+            existingOrder.PaperGramWeight = orderUpdateDto.PaperGramWeight;
+            existingOrder.PaperWidth = orderUpdateDto.PaperWidth;
             existingOrder.OrderStatus = orderUpdateDto.OrderStatus;
             existingOrder.Comment = orderUpdateDto.Comment;
 
@@ -120,8 +120,8 @@ namespace Printagon.Api.Services
                 JobName = updatedOrder.JobName,
                 YearlyNumber = updatedOrder.YearlyNumber,
                 PaperType = updatedOrder.PaperType,
-                GramWeight = updatedOrder.GramWeight,
-                RollWidth = updatedOrder.RollWidth,
+                PaperGramWeight = updatedOrder.PaperGramWeight,
+                PaperWidth = updatedOrder.PaperWidth,
                 OrderStatus = updatedOrder.OrderStatus,
                 Comment = updatedOrder.Comment,
                 CreatedAt = updatedOrder.CreatedAt
