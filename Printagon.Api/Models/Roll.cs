@@ -6,8 +6,8 @@ namespace Printagon.Api.Models
     {
         public  Guid Id { get; set; }
         public string? PaperType { get; set; }
-        public int? GramWeight { get; set; }
-        public int? RollWidth { get; set; }
+        public int? PaperGramWeight { get; set; }
+        public int? PaperWidth { get; set; }
         public int RollNumber { get; set; }
         public int RollWeight { get; set; }
         public int? RollWeightLeftOver { get; set; }

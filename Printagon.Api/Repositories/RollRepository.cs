@@ -2,7 +2,6 @@
 using Printagon.Api.Data;
 using Printagon.Api.Models;
 using Printagon.Api.Repositories.Interfaces;
-using System;
 
 namespace Printagon.Api.Repositories
 {
@@ -39,9 +38,9 @@ namespace Printagon.Api.Repositories
             return roll;
         }
 
-        public async Task<Roll?> UpdateRollAsync(Guid rollId, Roll updatedRoll)
+        public async Task<Roll?> UpdateRollAsync(Roll updatedRoll)
         {
-            var existingRoll = await _context.Rolls.FindAsync(rollId);
+            var existingRoll = await _context.Rolls.FindAsync(updatedRoll.Id);
 
             if (existingRoll == null)
             {
@@ -49,8 +48,8 @@ namespace Printagon.Api.Repositories
             }
 
             existingRoll.PaperType = updatedRoll.PaperType;
-            existingRoll.GramWeight = updatedRoll.GramWeight;
-            existingRoll.RollWidth = updatedRoll.RollWidth;
+            existingRoll.PaperGramWeight = updatedRoll.PaperGramWeight;
+            existingRoll.PaperWidth = updatedRoll.PaperWidth;
             existingRoll.RollNumber = updatedRoll.RollNumber;
             existingRoll.RollWeight = updatedRoll.RollWeight;
             existingRoll.Comment = updatedRoll.Comment;

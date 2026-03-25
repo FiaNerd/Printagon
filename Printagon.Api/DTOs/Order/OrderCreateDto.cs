@@ -16,10 +16,10 @@ namespace Printagon.Api.DTOs.Order
         public string PaperType { get; set; } = string.Empty;
 
         [Required]
-        public int GramWeight { get; set; }
+        public int PaperGramWeight { get; set; }
 
         [Required]
-        public int RollWidth { get; set; }
+        public int PaperWidth { get; set; }
 
 
         [Required]

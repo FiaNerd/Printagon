@@ -7,15 +7,15 @@ namespace Printagon.Api.DTOs.Roll
         [Required]
         public int RollNumber { get; set; }
 
+        public string? PaperType { get; set; }
+        public int? PaperWidth { get; set; }
+        public int? PaperGramWeight { get; set; }
+
+
         [Required]
         public int RollWeight { get; set; }
 
         public int? RollWeightLeftOver { get; set; }
         public string? Comment { get; set; }
-
-        // Optional overrides from order defaults
-        public string? PaperTypeOverride { get; set; }
-        public int? GramWeightOverride { get; set; }
-        public int? RollWidthOverride { get; set; }
     }
 }

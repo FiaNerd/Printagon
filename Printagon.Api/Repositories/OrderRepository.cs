@@ -50,8 +50,8 @@ namespace Printagon.Api.Repositories
             existingOrder.JobName = order.JobName;
             existingOrder.YearlyNumber = order.YearlyNumber;
             existingOrder.PaperType = order.PaperType;
-            existingOrder.GramWeight = order.GramWeight;
-            existingOrder.RollWidth = order.RollWidth;
+            existingOrder.PaperGramWeight = order.PaperGramWeight;
+            existingOrder.PaperWidth = order.PaperWidth;
             existingOrder.OrderStatus = order.OrderStatus;
             existingOrder.Comment = order.Comment;
 

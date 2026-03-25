@@ -15,7 +15,7 @@ namespace Printagon.Api.DTOs.Roll
 
         // Optional overrides from order defaults
         public string? PaperTypeOverride { get; set; }
-        public int? GramWeightOverride { get; set; }
+        public int? PaperGramWeightOverride { get; set; }
         public int? RollWidthOverride { get; set; }
     }
 }
