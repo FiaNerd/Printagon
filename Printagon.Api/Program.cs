@@ -152,13 +152,15 @@ app.MapDelete("/rolls/{rollId}", async (string rollId, IRollService service) =>
     try
     {
         await service.DeleteRollAsync(parsedId);
+
         return Results.NoContent();
     }
     catch (KeyNotFoundException)
     {
         return Results.NotFound();
     }
-});
+})
+    .WithTags("Rolls");
 
 app.Run();
 

@@ -23,8 +23,6 @@ namespace Printagon.Api.Repositories
 
         public async Task<Roll?> GetRollByIdAsync(Guid rollId)
         {
-            Console.WriteLine($"Fetching roll with ID: {rollId}");
-
             return await _context.Rolls
                 .Include(r => r.Orders)
                 .FirstOrDefaultAsync(r => r.Id == rollId);

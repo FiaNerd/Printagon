@@ -121,6 +121,10 @@ namespace Printagon.Api.Services
                 throw new KeyNotFoundException($"Roll with ID {rollId} not found.");
             }
 
+            if (existingRoll.Id != orderId)
+            { 
+                throw new InvalidOperationException($"Roll with ID {rollId} does not belong to Order with ID {orderId}.");
+            }
 
             existingRoll.RollNumber = updatedRoll.RollNumber;
             existingRoll.RollWeight = updatedRoll.RollWeight;
