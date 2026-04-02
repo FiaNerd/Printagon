@@ -16,6 +16,7 @@ namespace Printagon.Api.Models
         public Guid? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        [JsonIgnore]
         public ICollection<OrderRoll> OrderRolls { get; set; } = new List<OrderRoll>();
     }
 }

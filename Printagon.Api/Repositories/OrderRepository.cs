@@ -16,14 +16,14 @@ namespace Printagon.Api.Repositories
         public async Task<Order?> GetOrderByIdAsync(Guid orderId)
         {
            return await _context.Orders
-            .Include(o => o.Rolls)
+            .Include(o => o.OrderRolls)
             .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
             return await _context.Orders
-                .Include(o => o.Rolls)
+                .Include(o => o.OrderRolls)
             .ToListAsync();
         }
 
@@ -38,7 +38,7 @@ namespace Printagon.Api.Repositories
         public async Task<Order?> UpdateOrderAsync(Guid orderId, Order order)
         {
             var existingOrder = await _context.Orders
-                .Include(o => o.Rolls)
+                .Include(o => o.OrderRolls)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (existingOrder == null) 

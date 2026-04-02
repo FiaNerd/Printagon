@@ -84,3 +84,4 @@ namespace Printagon.Api.Data.Seed
             context.SaveChanges();
         }
     }
+}

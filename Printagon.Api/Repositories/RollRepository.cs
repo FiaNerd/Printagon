@@ -17,14 +17,14 @@ namespace Printagon.Api.Repositories
         public async Task<IEnumerable<Roll>> GetAllRollsAsync()
         {
             return await _context.Rolls
-                .Include(r => r.Orders)
+                .Include(r => r.OrderRolls)
                 .ToListAsync();
         }
 
         public async Task<Roll?> GetRollByIdAsync(Guid rollId)
         {
             return await _context.Rolls
-                .Include(r => r.Orders)
+                .Include(r => r.OrderRolls)
                 .FirstOrDefaultAsync(r => r.Id == rollId);
         }
 
