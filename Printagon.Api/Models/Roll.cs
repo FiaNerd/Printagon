@@ -4,7 +4,7 @@ namespace Printagon.Api.Models
 {
     public class Roll
     {
-        public  Guid Id { get; set; }
+        public Guid Id { get; set; }
         public string? PaperType { get; set; }
         public int? PaperGramWeight { get; set; }
         public int? PaperWidth { get; set; }
@@ -16,7 +16,6 @@ namespace Printagon.Api.Models
         public Guid? CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [JsonIgnore]
-        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<OrderRoll> OrderRolls { get; set; } = new List<OrderRoll>();
     }
 }
