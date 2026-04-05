@@ -1,6 +1,6 @@
 ﻿namespace Printagon.Api.DTOs.OrderRoll
 {
-    public class OrderRollCreateDto
+    public class OrderRollDto
     {
         public Guid OrderId { get; set; }
         public Guid RollId { get; set; }
