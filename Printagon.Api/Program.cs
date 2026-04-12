@@ -25,6 +25,7 @@ builder.Services.AddControllers()
    -------------- */
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IRollRepository, RollRepository>();
+builder.Services.AddScoped<IOrderRollRepository, OrderRollRepository>();
 
 /* --------------
    Services
