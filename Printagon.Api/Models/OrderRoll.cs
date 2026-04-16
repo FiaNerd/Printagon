@@ -12,7 +12,14 @@ public class OrderRoll
 
     public int IntakeWeight { get; set; }
     public int? OutputWeight { get; set; }
-    public int? ConsumedWeight { get; set; }
+
+    public int? ConsumedWeight
+        => OutputWeight.HasValue ? IntakeWeight - OutputWeight.Value : null;
+
+    public bool MatchesOrderPaper { get; set; } = true;
+    public string? DeviationReason { get; set; }
+    public bool IsRestRoll { get; set; } = false;
+    public int? WebBreak { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
