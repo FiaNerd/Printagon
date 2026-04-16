@@ -41,42 +41,45 @@ namespace Printagon.Api.Data.Seed
             // ----------- ROLLS -----------
             var roll1 = new Roll
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                 RollNumber = 1,
-                RollWeight = 1000,
-                RollWeightLeftOver = 1000,
+                RollWeight = 998,
+                RollWeightLeftOver = 0,
                 PaperType = "Holmen View HS",
                 CreatedAt = DateTime.Now
             };
 
             var roll2 = new Roll
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                 RollNumber = 2,
                 RollWeight = 1000,
-                RollWeightLeftOver = 800,
+                RollWeightLeftOver = 0,
                 PaperType = "Holmen View HS",
                 CreatedAt = DateTime.Now
             };
 
+
+            // ----------- ORDER ROLLS -----------
             var orderRoll1 = new OrderRoll
             {
                 Order = order1,
                 Roll = roll1,
-                UsedWeight = 200
+                IntakeWeight = 998,
+                OutputWeight = 564 
             };
 
             var orderRoll2 = new OrderRoll
             {
                 Order = order1,
                 Roll = roll2,
-                UsedWeight = 200
+                IntakeWeight = 1000,
+                OutputWeight = 800 
             };
 
 
-            order1.OrderRolls.Add(orderRoll1);
-            order1.OrderRolls.Add(orderRoll2);
 
+            context.OrderRolls.AddRange(orderRoll1, orderRoll2);
 
             context.Orders.AddRange(order1, order2);
             context.Rolls.AddRange(roll1, roll2);

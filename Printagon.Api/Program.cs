@@ -7,6 +7,7 @@ using Printagon.Api.DTOs.Roll;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services;
+using Printagon.Api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,20 +77,26 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.MapGet("/rolls", async (IRollService service) =>
+app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollRepository repo, Guid orderId) =>
 {
-    var rolls = await service.GetAllRollsAsync();
 
-    Console.WriteLine($"Retrieved {rolls.Count()} rolls from the service layer.");
+    var orderRoll = await repo.GetRollsForOrderAsync(orderId);
+
+    if (orderRoll is null)
+    {
+        return Results.NotFound();
+    }
+
+    //Console.WriteLine($"Retrieved {rolls.Count()} rolls from the service layer.")
 
     var options = new System.Text.Json.JsonSerializerOptions
     {
         ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
     };
 
-    return Results.Json(rolls, options);
+    return Results.Json(orderRoll, options);
 })
-    .WithTags("Rolls");
+    .WithTags("OrderRolls");
 
 
 app.MapGet("/rolls/{rollId}", async (Guid rollId, IRollService service) =>
