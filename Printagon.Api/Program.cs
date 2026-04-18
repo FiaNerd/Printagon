@@ -77,24 +77,47 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollRepository repo, Guid orderId) =>
+app.MapGet("/order-rolls/{orderId}", async (IOrderRollRepository repo, Guid orderId) =>
 {
 
     var orderRoll = await repo.GetRollsForOrderAsync(orderId);
 
-    if (orderRoll is null)
-    {
-        return Results.NotFound();
-    }
-
     //Console.WriteLine($"Retrieved {rolls.Count()} rolls from the service layer.")
 
-    var options = new System.Text.Json.JsonSerializerOptions
-    {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
+    //var options = new System.Text.Json.JsonSerializerOptions
+    //{
+    //    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    //};
 
-    return Results.Json(orderRoll, options);
+    return Results.Ok(orderRoll.Select(or => new
+    {
+        or.Id,
+        or.OrderId,
+        or.RollId,
+        or.IntakeWeight,
+        or.OutputWeight,
+        or.ConsumedWeight,
+        or.MatchesOrderPaper,
+        or.DeviationReason,
+        or.IsRestRoll,
+        or.WebBreak,
+        or.CreatedAt,
+        Order = new
+        {
+            or.Order.Id,
+            or.Order.OrderNumber,
+            or.Order.JobName
+        },
+        Roll = new
+        {
+            or.Roll.Id,
+            or.Roll.RollNumber,
+            or.Roll.PaperType,
+            or.Roll.PaperGramWeight,
+            or.Roll.PaperWidth,
+            or.Roll.RollWeightLeftOver
+        }
+    }));
 })
     .WithTags("OrderRolls");
 

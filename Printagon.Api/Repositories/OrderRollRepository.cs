@@ -18,6 +18,8 @@ namespace Printagon.Api.Repositories
 
             return await _context.OrderRolls
                 .Where(or => or.OrderId == orderId)
+                .Include(or => or.Order )
+                .Include(or => or.Roll)
                 .ToListAsync();
         }
 
