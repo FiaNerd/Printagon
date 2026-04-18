@@ -25,7 +25,11 @@ namespace Printagon.Api.Repositories
 
         public Task<OrderRoll?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
         {
-            throw new NotImplementedException();
+            return _context.OrderRolls
+                .Where(or => or.OrderId == orderId && or.RollId == rollId)
+                .Include(or => or.Order)
+                .Include(or => or.Roll)
+                .FirstOrDefaultAsync();
         }
         public Task AddOrderRollAsync(OrderRoll orderRoll)
         {

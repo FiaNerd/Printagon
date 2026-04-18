@@ -122,21 +122,51 @@ app.MapGet("/order-rolls/{orderId}", async (IOrderRollRepository repo, Guid orde
     .WithTags("OrderRolls");
 
 
-app.MapGet("/rolls/{rollId}", async (Guid rollId, IRollService service) =>
+app.MapGet("/order-rolls/{orderId}/{rollId}", async (Guid orderId,Guid rollId, IOrderRollRepository repo) =>
 {
-    var roll = await service.GetRollByIdAsync(rollId);
+    var roll = await repo.GetByOrderAndRollAsync(orderId, rollId);
 
     if (roll == null)
     {
         return Results.NotFound();
     }
 
-    var options = new System.Text.Json.JsonSerializerOptions
+    return Results.Ok(new
     {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
+        roll.Id,
+        roll.OrderId,
+        roll.RollId,
+        roll.IntakeWeight,
+        roll.OutputWeight,
+        roll.ConsumedWeight,
+        roll.MatchesOrderPaper,
+        roll.DeviationReason,
+        roll.IsRestRoll,
+        roll.WebBreak,
+        roll.CreatedAt,
+        Order = new
+        {
+            roll.Order.Id,
+            roll.Order.OrderNumber,
+            roll.Order.JobName
+        },
+        Roll = new
+        {
+            roll.Roll.Id,
+            roll.Roll.RollNumber,
+            roll.Roll.PaperType,
+            roll.Roll.PaperGramWeight,
+            roll.Roll.PaperWidth,
+            roll.Roll.RollWeightLeftOver
+        }
+    });
 
-    return Results.Json(roll, options);
+    //var options = new System.Text.Json.JsonSerializerOptions
+    //{
+    //    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    //};
+
+    //return Results.Json(roll, options);
 })
     .WithTags("Rolls");
 

@@ -59,6 +59,16 @@ namespace Printagon.Api.Data.Seed
                 CreatedAt = DateTime.Now
             };
 
+            var roll3 = new Roll
+            {
+                Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                RollNumber = 3,
+                RollWeight = 1000,
+                RollWeightLeftOver = 0,
+                PaperType = "Skogh papper",
+                CreatedAt = DateTime.Now
+            };
+
 
             // ----------- ORDER ROLLS -----------
             var orderRoll1 = new OrderRoll
@@ -71,18 +81,25 @@ namespace Printagon.Api.Data.Seed
 
             var orderRoll2 = new OrderRoll
             {
-                Order = order1,
+                Order = order2,
                 Roll = roll2,
                 IntakeWeight = 1000,
                 OutputWeight = 800 
             };
 
+            var orderRoll3 = new OrderRoll
+            {
+                Order = order2,
+                Roll = roll3,
+                IntakeWeight = 1000,
+                OutputWeight = 900 
+            };
 
 
-            context.OrderRolls.AddRange(orderRoll1, orderRoll2);
 
+            context.OrderRolls.AddRange(orderRoll1, orderRoll2, orderRoll3);
             context.Orders.AddRange(order1, order2);
-            context.Rolls.AddRange(roll1, roll2);
+            context.Rolls.AddRange(roll1, roll2, roll3);
 
             context.SaveChanges();
         }

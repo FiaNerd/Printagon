@@ -61,8 +61,8 @@ namespace Printagon.Api.Repositories
         {
             var roll = await _context.Rolls.FindAsync(rollId);
 
-            if (rollId == null)
-            { 
+            if (roll == null)
+            {
                 return false;
             }
 
