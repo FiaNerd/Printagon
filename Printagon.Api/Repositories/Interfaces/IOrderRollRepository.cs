@@ -6,9 +6,8 @@ namespace Printagon.Api.Repositories.Interfaces
     {
         Task<OrderRoll?> GetByOrderAndRollAsync(Guid orderId, Guid rollId);
         Task<IEnumerable<OrderRoll>> GetRollsForOrderAsync(Guid orderId);
-
-        Task AddOrderRollAsync(OrderRoll orderRoll);
-        Task UpdateOrderRollAsync(OrderRoll orderRoll);
+        Task<OrderRoll> CreateOrderRollAsync(OrderRoll orderRoll);
+        Task<OrderRoll?> UpdateOrderRollAsync(OrderRoll orderRoll);
         Task DeleteOrderRollAsync(OrderRoll orderRoll);
     }
 }

@@ -23,20 +23,24 @@ namespace Printagon.Api.Repositories
                 .ToListAsync();
         }
 
-        public Task<OrderRoll?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
+        public async Task<OrderRoll?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
         {
-            return _context.OrderRolls
+            return await _context.OrderRolls
                 .Where(or => or.OrderId == orderId && or.RollId == rollId)
                 .Include(or => or.Order)
                 .Include(or => or.Roll)
                 .FirstOrDefaultAsync();
         }
-        public Task AddOrderRollAsync(OrderRoll orderRoll)
+
+        public async Task<OrderRoll> CreateOrderRollAsync(OrderRoll orderRoll)
         {
-            throw new NotImplementedException();
+            await _context.OrderRolls.AddAsync(orderRoll);
+            await _context.SaveChangesAsync();
+
+            return orderRoll;
         }
 
-        public Task UpdateOrderRollAsync(OrderRoll orderRoll)
+        public Task<OrderRoll?> UpdateOrderRollAsync(OrderRoll orderRoll)
         {
             throw new NotImplementedException();
         }
