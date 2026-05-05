@@ -35,10 +35,31 @@ namespace Printagon.Api.Services
         }
 
 
-        public Task<OrderRollResponseDto?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
+        public async Task<OrderRollResponseDto?> GetOrderAndRollByIdAsync(Guid orderId, Guid rollId)
         {
-            throw new NotImplementedException();
+            var orderRoll = await _orderRollRepository.GetOrderRollByOrderIdAndRollIdAsync(orderId, rollId);
+          
+            if (orderRoll == null)
+            {
+                return null;
+            }
+
+            return new OrderRollResponseDto
+            {
+                Id = orderRoll.Id,
+                OrderId = orderRoll.OrderId,
+                RollId = orderRoll.RollId,
+                IntakeWeight = orderRoll.IntakeWeight,
+                OutputWeight = orderRoll.OutputWeight,
+                ConsumedWeight = orderRoll.ConsumedWeight,
+
+                RollNumber = orderRoll.Roll?.RollNumber,
+                PaperType = orderRoll.Roll?.PaperType,
+                PaperGramWeight = orderRoll.Roll?.PaperGramWeight,
+                PaperWidth = orderRoll.Roll?.PaperWidth
+            };
         }
+
         public Task<OrderRollResponseDto?> UpdateAsync(OrderRollUpdateDto dto)
         {
             throw new NotImplementedException();

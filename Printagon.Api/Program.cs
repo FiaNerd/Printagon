@@ -91,47 +91,23 @@ app.MapGet("/order-rolls/{orderId}", async (IOrderRollService service, Guid orde
 .WithTags("OrderRolls");
 
 
-app.MapGet("/order-rolls/{orderId}/{rollId}", async (Guid orderId, Guid rollId, IOrderRollRepository repo) =>
+app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollService service, Guid orderId, Guid rollId) =>
 {
-    var roll = await repo.GetOrderRollByOrderIdAndRollIdAsync(orderId, rollId);
+    var roll = await service.GetOrderAndRollByIdAsync(orderId, rollId);
 
     if (roll == null)
     {
         return Results.NotFound();
     }
 
-    return Results.Ok(new
-    {
-        roll.Id,
-        roll.OrderId,
-        roll.RollId,
-        roll.IntakeWeight,
-        roll.OutputWeight,
-        roll.ConsumedWeight,
-        roll.MatchesOrderPaper,
-        roll.DeviationReason,
-        roll.IsRestRoll,
-        roll.WebBreak,
-        roll.CreatedAt,
-        Order = new
-        {
-            roll.Order.Id,
-            roll.Order.OrderNumber,
-            roll.Order.JobName
-        },
-        Roll = new
-        {
-            roll.Roll.Id,
-            roll.Roll.RollNumber,
-            roll.Roll.PaperType,
-            roll.Roll.PaperGramWeight,
-            roll.Roll.PaperWidth,
-            roll.Roll.RollWeightLeftOver
-        }
-    });
-});
-    //var options = new System.Text.Json.JsonSerializerOptions
-    //{
+    return Results.Ok(roll);
+})
+.WithTags("OrderRolls");
+
+
+
+//var options = new System.Text.Json.JsonSerializerOptions
+//{
 
 //app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll orderRoll,  IOrderRollRepository repo) =>
 //{
