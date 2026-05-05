@@ -34,6 +34,7 @@ builder.Services.AddScoped<IOrderRollRepository, OrderRollRepository>();
    -------------- */
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IRollService, RollService>();
+builder.Services.AddScoped<IOrderRollService, OrderRollService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
