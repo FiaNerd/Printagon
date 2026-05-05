@@ -4,10 +4,11 @@ namespace Printagon.Api.Repositories.Interfaces
 {
     public interface IOrderRollRepository
     {
-        Task<OrderRoll?> GetByOrderAndRollAsync(Guid orderId, Guid rollId);
-        Task<IEnumerable<OrderRoll>> GetRollsForOrderAsync(Guid orderId);
-        Task<OrderRoll> CreateOrderRollAsync(OrderRoll orderRoll);
-        Task<OrderRoll?> UpdateOrderRollAsync(OrderRoll orderRoll);
-        Task DeleteOrderRollAsync(OrderRoll orderRoll);
+        Task<IEnumerable<OrderRoll>> GetOrderRollsByOrderIdAsync(Guid orderId);
+        Task<OrderRoll?> GetOrderRollByIdAsync(Guid orderRollId);
+        Task<OrderRoll?> GetOrderRollByOrderIdAndRollIdAsync(Guid orderId, Guid rollId);
+        Task<OrderRoll> CreateOrderRollAsync(OrderRoll newOrderRoll);
+        Task<OrderRoll?> UpdateOrderRollAsync(OrderRoll updateOrderRoll);
+        Task<bool> DeleteOrderRollByIdAsync(Guid orderRollId);
     }
 }

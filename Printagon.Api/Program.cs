@@ -8,6 +8,7 @@ using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services;
 using Printagon.Api.Models;
+using Printagon.Api.DTOs.OrderRoll;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,7 +81,7 @@ if (!app.Environment.IsDevelopment())
 app.MapGet("/order-rolls/{orderId}", async (IOrderRollRepository repo, Guid orderId) =>
 {
 
-    var orderRoll = await repo.GetRollsForOrderAsync(orderId);
+    var orderRoll = await repo.GetOrderRollsByOrderIdAsync(orderId);
 
     //Console.WriteLine($"Retrieved {rolls.Count()} rolls from the service layer.")
 
@@ -124,7 +125,7 @@ app.MapGet("/order-rolls/{orderId}", async (IOrderRollRepository repo, Guid orde
 
 app.MapGet("/order-rolls/{orderId}/{rollId}", async (Guid orderId,Guid rollId, IOrderRollRepository repo) =>
 {
-    var roll = await repo.GetByOrderAndRollAsync(orderId, rollId);
+    var roll = await repo.GetOrderRollByOrderIdAndRollIdAsync(orderId, rollId);
 
     if (roll == null)
     {
@@ -183,9 +184,41 @@ app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll order
 .WithTags("OrderRolls");
 
 
-app.MapPut("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId, RollUpdateDto roll, IRollService service) =>
+app.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRollPatchDto patch, IOrderRollRepository repo) =>
 {
-    var updateRoll = await service.UpdateRollAsync(orderId, rollId, roll);
+    var existingOrderRoll = await repo.GetOrderRollByIdAsync(orderRollId);
+
+    if (existingOrderRoll == null)
+    {
+        return Results.NotFound();
+    }
+
+    if (patch.OutputWeight.HasValue)
+    {
+        existingOrderRoll.OutputWeight = patch.OutputWeight.Value;
+    }
+
+    if (patch.MatchesOrderPaper.HasValue)
+    {
+        existingOrderRoll.MatchesOrderPaper = patch.MatchesOrderPaper.Value;
+    }
+
+    if (patch.DeviationReason != null)
+    {
+        existingOrderRoll.DeviationReason = patch.DeviationReason;
+    }
+
+    if (patch.IsRestRoll.HasValue)
+    {
+        existingOrderRoll.IsRestRoll = patch.IsRestRoll.Value;
+    }
+
+    if (patch.WebBreak.HasValue)
+    {
+        existingOrderRoll.WebBreak = patch.WebBreak.Value;
+    }
+
+    var updateRoll = await repo.UpdateOrderRollAsync(existingOrderRoll);
 
     if (updateRoll == null)
     {
@@ -201,20 +234,16 @@ app.MapPut("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId,
 
     return Results.Json(updateRoll, options);
 })
-    .WithTags("Rolls");
+    .WithTags("OrderRolls");
 
 
 
-app.MapDelete("/rolls/{rollId}", async (string rollId, IRollService service) =>
+app.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
 {
-    if (!Guid.TryParse(rollId, out var parsedId))
-    {
-        return Results.BadRequest("Invalid GUID format.");
-    }
 
     try
     {
-        await service.DeleteRollAsync(parsedId);
+        await repo.DeleteOrderRollByIdAsync(orderRollId);
 
         return Results.NoContent();
     }
@@ -223,7 +252,7 @@ app.MapDelete("/rolls/{rollId}", async (string rollId, IRollService service) =>
         return Results.NotFound();
     }
 })
-    .WithTags("Rolls");
+    .WithTags("OrderRolls");
 
 app.Run();
 
