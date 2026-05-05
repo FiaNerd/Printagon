@@ -1,19 +1,49 @@
 ﻿using Printagon.Api.DTOs.OrderRoll;
+using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
-using Printagon.Api.Services.Interfaces;
 
 namespace Printagon.Api.Services
 {
     public class OrderRollService : IOrderRollService
     {
-        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderRollRepository _orderRollRepository;
 
-        public OrderRollService(IOrderRepository orderRepository)
+        public OrderRollService(IOrderRollRepository orderRepository)
         {
-            _orderRepository = orderRepository;
+            _orderRollRepository = orderRepository;
         }
 
-        public Task<OrderRollDto> CreateAsync(OrderRollCreateDto dto)
+
+        public async Task<IEnumerable<OrderRollResponseDto>> GetAllByOrderIdAsync(Guid orderId)
+        {
+            var orderRolls = await _orderRollRepository.GetOrderRollsByOrderIdAsync(orderId);
+
+            return orderRolls.Select(or => new OrderRollResponseDto
+            {
+                Id = or.Id,
+                OrderId = or.OrderId,
+                RollId = or.RollId,
+                IntakeWeight = or.IntakeWeight,
+                OutputWeight = or.OutputWeight,
+                ConsumedWeight = or.ConsumedWeight,
+
+                RollNumber = or.Roll?.RollNumber,
+                PaperType = or.Roll?.PaperType,
+                PaperGramWeight = or.Roll?.PaperGramWeight,
+                PaperWidth = or.Roll?.PaperWidth
+            });
+        }
+
+
+        public Task<OrderRollResponseDto?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<OrderRollResponseDto?> UpdateAsync(OrderRollUpdateDto dto)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<OrderRollResponseDto> CreateAsync(OrderRollCreateDto dto)
         {
             throw new NotImplementedException();
         }
@@ -23,24 +53,5 @@ namespace Printagon.Api.Services
             throw new NotImplementedException();
         }
 
-        public Task<OrderRollDto?> GetByIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<OrderRollDto?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<OrderRollDto>> GetByOrderIdAsync(Guid orderId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<OrderRollDto?> UpdateAsync(OrderRollUpdateDto dto)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

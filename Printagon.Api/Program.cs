@@ -79,52 +79,19 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.MapGet("/order-rolls/{orderId}", async (IOrderRollRepository repo, Guid orderId) =>
+app.MapGet("/order-rolls/{orderId}", async (IOrderRollService service, Guid orderId) =>
 {
+    var result = await service.GetAllByOrderIdAsync(orderId);
 
-    var orderRoll = await repo.GetOrderRollsByOrderIdAsync(orderId);
+    if (result == null || !result.Any())
+        return Results.NotFound();
 
-    //Console.WriteLine($"Retrieved {rolls.Count()} rolls from the service layer.")
-
-    //var options = new System.Text.Json.JsonSerializerOptions
-    //{
-    //    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    //};
-
-    return Results.Ok(orderRoll.Select(or => new
-    {
-        or.Id,
-        or.OrderId,
-        or.RollId,
-        or.IntakeWeight,
-        or.OutputWeight,
-        or.ConsumedWeight,
-        or.MatchesOrderPaper,
-        or.DeviationReason,
-        or.IsRestRoll,
-        or.WebBreak,
-        or.CreatedAt,
-        Order = new
-        {
-            or.Order.Id,
-            or.Order.OrderNumber,
-            or.Order.JobName
-        },
-        Roll = new
-        {
-            or.Roll.Id,
-            or.Roll.RollNumber,
-            or.Roll.PaperType,
-            or.Roll.PaperGramWeight,
-            or.Roll.PaperWidth,
-            or.Roll.RollWeightLeftOver
-        }
-    }));
+    return Results.Ok(result);
 })
-    .WithTags("OrderRolls");
+.WithTags("OrderRolls");
 
 
-app.MapGet("/order-rolls/{orderId}/{rollId}", async (Guid orderId,Guid rollId, IOrderRollRepository repo) =>
+app.MapGet("/order-rolls/{orderId}/{rollId}", async (Guid orderId, Guid rollId, IOrderRollRepository repo) =>
 {
     var roll = await repo.GetOrderRollByOrderIdAndRollIdAsync(orderId, rollId);
 
@@ -162,98 +129,98 @@ app.MapGet("/order-rolls/{orderId}/{rollId}", async (Guid orderId,Guid rollId, I
             roll.Roll.RollWeightLeftOver
         }
     });
-
+});
     //var options = new System.Text.Json.JsonSerializerOptions
     //{
-    //    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    //};
 
-    //return Results.Json(roll, options);
-})
-    .WithTags("OrderRolls");
+//app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll orderRoll,  IOrderRollRepository repo) =>
+//{
+//    orderRoll.OrderId = orderId;
 
+//    var createdRoll = await repo.CreateOrderRollAsync(orderRoll);
 
-
-app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll orderRoll,  IOrderRollRepository repo) =>
-{
-    orderRoll.OrderId = orderId;
-
-    var createdRoll = await repo.CreateOrderRollAsync(orderRoll);
-
-    return Results.Created($"/order-rolls/{orderId}/{createdRoll.RollId}", createdRoll);
-})
-.WithTags("OrderRolls");
+//    return Results.Created($"/order-rolls/{orderId}/{createdRoll.RollId}", createdRoll);
+//})
+//.WithTags("OrderRolls");
 
 
-app.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRollPatchDto patch, IOrderRollRepository repo) =>
-{
-    var existingOrderRoll = await repo.GetOrderRollByIdAsync(orderRollId);
+//app.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRollPatch patch, IOrderRollRepository repo) =>
+//{
+//    var existingOrderRoll = await repo.GetOrderRollByIdAsync(orderRollId);
 
-    if (existingOrderRoll == null)
-    {
-        return Results.NotFound();
-    }
+//    if (existingOrderRoll == null)
+//    {
+//        return Results.NotFound();
+//    }
 
-    if (patch.OutputWeight.HasValue)
-    {
-        existingOrderRoll.OutputWeight = patch.OutputWeight.Value;
-    }
+//    if (patch.OutputWeight.HasValue)
+//    {
+//        existingOrderRoll.OutputWeight = patch.OutputWeight.Value;
+//    }
 
-    if (patch.MatchesOrderPaper.HasValue)
-    {
-        existingOrderRoll.MatchesOrderPaper = patch.MatchesOrderPaper.Value;
-    }
+//    if (patch.MatchesOrderPaper.HasValue)
+//    {
+//        existingOrderRoll.MatchesOrderPaper = patch.MatchesOrderPaper.Value;
+//    }
 
-    if (patch.DeviationReason != null)
-    {
-        existingOrderRoll.DeviationReason = patch.DeviationReason;
-    }
+//    if (patch.DeviationReason != null)
+//    {
+//        existingOrderRoll.DeviationReason = patch.DeviationReason;
+//    }
 
-    if (patch.IsRestRoll.HasValue)
-    {
-        existingOrderRoll.IsRestRoll = patch.IsRestRoll.Value;
-    }
+//    if (patch.IsRestRoll.HasValue)
+//    {
+//        existingOrderRoll.IsRestRoll = patch.IsRestRoll.Value;
+//    }
 
-    if (patch.WebBreak.HasValue)
-    {
-        existingOrderRoll.WebBreak = patch.WebBreak.Value;
-    }
+//    if (patch.WebBreak.HasValue)
+//    {
+//        existingOrderRoll.WebBreak = patch.WebBreak.Value;
+//    }
 
-    var updateRoll = await repo.UpdateOrderRollAsync(existingOrderRoll);
+//    var updateRoll = await repo.UpdateOrderRollAsync(existingOrderRoll);
 
-    if (updateRoll == null)
-    {
-        return Results.NotFound();
-    }
+//    if (updateRoll == null)
+//    {
+//        return Results.NotFound();
+//    }
 
-    var options = new System.Text.Json.JsonSerializerOptions
-    {
-        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-    };
+//    var options = new System.Text.Json.JsonSerializerOptions
+//    {
+//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+//    };
 
-    Console.WriteLine($"Updated roll with ID: {updateRoll.Id}");
+//    Console.WriteLine($"Updated roll with ID: {updateRoll.Id}");
 
-    return Results.Json(updateRoll, options);
-})
-    .WithTags("OrderRolls");
+//    return Results.Json(updateRoll, options);
+//})
+//    .WithTags("OrderRolls");
 
 
 
-app.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
-{
+//app.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
+//{
 
-    try
-    {
-        await repo.DeleteOrderRollByIdAsync(orderRollId);
+//    try
+//    {
+//        await repo.DeleteOrderRollByIdAsync(orderRollId);
 
-        return Results.NoContent();
-    }
-    catch (KeyNotFoundException)
-    {
-        return Results.NotFound();
-    }
-})
-    .WithTags("OrderRolls");
+//        return Results.NoContent();
+//    }
+//    catch (KeyNotFoundException)
+//    {
+//        return Results.NotFound();
+//    }
+//})
+//    .WithTags("OrderRolls");
+//    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+//};
+
+//    //return Results.Json(roll, options);
+//})
+//    .WithTags("OrderRolls");
+
+
 
 app.Run();
 
