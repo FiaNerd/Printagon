@@ -61,9 +61,39 @@ namespace Printagon.Api.Services
         }
 
     
-        public Task<OrderRollResponseDto> CreateOrderRollAsync(OrderRollCreateDto dto)
+        public async Task<OrderRollResponseDto> CreateOrderRollAsync(OrderRollCreateDto dto)
         {
-            throw new NotImplementedException();
+            var existingOrderRoll = await _orderRollRepository.GetOrderRollByOrderIdAndRollIdAsync(dto.OrderId, dto.RollId);
+
+            var newOrderRoll = new OrderRoll
+            {
+                Id = Guid.NewGuid(),
+                OrderId = dto.OrderId,
+                RollId = dto.RollId,
+                IntakeWeight = dto.NewRollWeight
+            };
+
+            if (existingOrderRoll != null)
+            { 
+                newOrderRoll.IntakeWeight += existingOrderRoll.IntakeWeight; 
+            }
+
+            await _orderRollRepository.CreateOrderRollAsync(newOrderRoll);
+
+            return new OrderRollResponseDto
+            {
+                Id = newOrderRoll.Id,
+                OrderId = newOrderRoll.OrderId,
+                RollId = newOrderRoll.RollId,
+                IntakeWeight = newOrderRoll.IntakeWeight,
+                OutputWeight = newOrderRoll.OutputWeight,
+                ConsumedWeight = newOrderRoll.ConsumedWeight,
+
+                RollNumber = newOrderRoll.Roll?.RollNumber,
+                PaperType = newOrderRoll.Roll?.PaperType,
+                PaperGramWeight = newOrderRoll.Roll?.PaperGramWeight,
+                PaperWidth = newOrderRoll.Roll?.PaperWidth
+            };
         }
 
         public Task<OrderRollResponseDto?> UpdateOrderRollAsync(OrderRollUpdateDto dto)
