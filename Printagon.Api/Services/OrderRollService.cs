@@ -60,16 +60,18 @@ namespace Printagon.Api.Services
             };
         }
 
-        public Task<OrderRollResponseDto?> UpdateAsync(OrderRollUpdateDto dto)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<OrderRollResponseDto> CreateAsync(OrderRollCreateDto dto)
+    
+        public Task<OrderRollResponseDto> CreateOrderRollAsync(OrderRollCreateDto dto)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteAsync(Guid id)
+        public Task<OrderRollResponseDto?> UpdateOrderRollAsync(OrderRollUpdateDto dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteOrderRollAsync(Guid id)
         {
             throw new NotImplementedException();
         }

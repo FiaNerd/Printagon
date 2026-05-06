@@ -105,15 +105,11 @@ app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollService service, 
 .WithTags("OrderRolls");
 
 
-
-//var options = new System.Text.Json.JsonSerializerOptions
-//{
-
-//app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll orderRoll,  IOrderRollRepository repo) =>
+//app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRollCreateDto orderRoll, IOrderRollService service) =>
 //{
 //    orderRoll.OrderId = orderId;
 
-//    var createdRoll = await repo.CreateOrderRollAsync(orderRoll);
+//    var createdRoll = await service.CreateAsync(orderRoll);
 
 //    return Results.Created($"/order-rolls/{orderId}/{createdRoll.RollId}", createdRoll);
 //})
