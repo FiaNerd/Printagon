@@ -62,8 +62,7 @@ namespace Printagon.Api.Repositories
             existingOrderRoll.MatchesOrderPaper = updatedOrderRoll.MatchesOrderPaper;
             existingOrderRoll.DeviationReason = updatedOrderRoll.DeviationReason;
             existingOrderRoll.IsRestRoll = updatedOrderRoll.IsRestRoll;
-            existingOrderRoll.WebBreak = updatedOrderRoll.WebBreak;
-
+            existingOrderRoll.WebBreakCount = updatedOrderRoll.WebBreakCount;
             await _context.SaveChangesAsync();
 
             return existingOrderRoll;
