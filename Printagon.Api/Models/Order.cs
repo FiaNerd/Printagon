@@ -1,4 +1,5 @@
 ﻿using Printagon.Api.Enums;
+using System.Text.Json.Serialization;
 
 namespace Printagon.Api.Models
 {
@@ -15,6 +16,7 @@ namespace Printagon.Api.Models
             public string? Comment { get; set; }
             public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        [JsonIgnore]
             public ICollection<OrderRoll> OrderRolls { get; set; } = new List<OrderRoll>();
         }
     

@@ -90,12 +90,23 @@ namespace Printagon.Api.Data.Seed
 
 
             // ----------- ORDER ROLLS -----------
+
             var orderRoll1 = new OrderRoll
             {
                 Order = order1,
                 Roll = roll1,
+
                 IntakeWeight = 998,
-                OutputWeight = 564 
+                OutputWeight = 564,
+
+                PaperType = roll1.PaperType,
+                PaperGramWeight = roll1.PaperGramWeight,
+                PaperWidth = roll1.PaperWidth,
+
+                MatchesOrderPaper =
+                  order1.PaperType == roll1.PaperType &&
+                  order1.PaperGramWeight == roll1.PaperGramWeight &&
+                  order1.PaperWidth == roll1.PaperWidth
             };
 
             var orderRoll2 = new OrderRoll
@@ -137,6 +148,8 @@ namespace Printagon.Api.Data.Seed
                 OutputWeight = null
             };
 
+
+          
 
 
             context.OrderRolls.AddRange(orderRoll1, orderRoll2, orderRoll3, orderRoll4, orderRoll5, orderRoll6);

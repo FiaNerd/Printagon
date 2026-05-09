@@ -34,7 +34,7 @@ builder.Services.AddScoped<IOrderRollRepository, OrderRollRepository>();
    -------------- */
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IRollService, RollService>();
-builder.Services.AddScoped<IOrderRollService, OrderRollService>();
+//builder.Services.AddScoped<IOrderRollService, OrderRollService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -79,21 +79,33 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
-app.MapGet("/order-rolls/{orderId}", async (IOrderRollService service, Guid orderId) =>
-{
-    var result = await service.GetAllByOrderIdAsync(orderId);
 
-    if (result == null || !result.Any())
-        return Results.NotFound();
+app.MapGet("/orders/{orderId}/order-rolls", async (IOrderRollRepository repo, Guid orderId) =>
+{
+    var result = await repo.GetAllByOrderIdAsync(orderId);
 
     return Results.Ok(result);
 })
 .WithTags("OrderRolls");
 
 
-app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollService service, Guid orderId, Guid rollId) =>
+app.Map("/order-rolls/{orderRollId}", async (IOrderRollRepository repo, Guid orderRollId) => { 
+    
+    var roll = await repo.GetByIdAsync(orderRollId);
+
+    if (roll == null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(roll);
+})
+    .WithTags("OrderRolls");
+
+
+app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollRepository repo, Guid orderId, Guid rollId) =>
 {
-    var roll = await service.GetOrderAndRollByIdAsync(orderId, rollId);
+    var roll = await repo.GetByOrderAndRollAsync(orderId, rollId);
 
     if (roll == null)
     {
@@ -105,11 +117,13 @@ app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollService service, 
 .WithTags("OrderRolls");
 
 
-//app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRollCreateDto orderRoll, IOrderRollService service) =>
-//{
-//    orderRoll.OrderId = orderId;
 
-//    var createdRoll = await service.CreateAsync(orderRoll);
+
+//app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRollRepository orderRoll, IOrderRollRepository repo) =>
+//{
+//    orderRoll. = orderId;
+
+//    var createdRoll = await service.AddAs(orderRoll);
 
 //    return Results.Created($"/order-rolls/{orderId}/{createdRoll.RollId}", createdRoll);
 //})

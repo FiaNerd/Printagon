@@ -9,11 +9,11 @@ public class OrderRoll
     public Order Order { get; set; } = null!;
     public Guid RollId { get; set; }
     public Roll Roll { get; set; } = null!;
-    public decimal IntakeWeight { get; set; }
-    public decimal? OutputWeight { get; set; }
+    public int IntakeWeight { get; set; }
+    public int? OutputWeight { get; set; }
 
     [NotMapped]
-    public decimal? ConsumedWeight =>
+    public int? ConsumedWeight =>
         OutputWeight.HasValue ? IntakeWeight - OutputWeight.Value : null;
 
     public string? PaperType { get; set; }
