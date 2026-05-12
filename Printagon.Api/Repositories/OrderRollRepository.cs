@@ -37,12 +37,14 @@ namespace Printagon.Api.Repositories
                 .Include(or => or.Roll)
                 .FirstOrDefaultAsync(or => or.OrderId == orderId && or.RollId == rollId);
         }
-  
-  
-        public async Task AddAsync(OrderRoll orderRoll)
+
+
+        public async Task<OrderRoll> AddAsync(OrderRoll orderRoll)
         {
-             await _context.OrderRolls
-                .AddAsync(orderRoll);
+            await _context.OrderRolls.AddAsync(orderRoll);
+            await _context.SaveChangesAsync();
+
+            return orderRoll;
         }
 
         public void Update(OrderRoll orderRoll)

@@ -10,7 +10,7 @@ namespace Printagon.Api.Repositories.Interfaces
 
         Task<OrderRoll?> GetByOrderAndRollAsync(Guid orderId, Guid rollId);
 
-        Task AddAsync(OrderRoll orderRoll);
+        Task<OrderRoll> AddAsync(OrderRoll orderRoll);
 
         void Update(OrderRoll orderRoll);
 

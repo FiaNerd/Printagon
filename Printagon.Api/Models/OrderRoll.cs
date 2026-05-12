@@ -23,7 +23,7 @@ public class OrderRoll
     public string? DeviationReason { get; set; }
 
     public int? WebBreakCount { get; set; }
-    public bool IsRestRoll { get; set; }
+    public bool IsRestRoll { get; set; }        
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

@@ -119,15 +119,15 @@ app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollRepository repo, 
 
 
 
-//app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRollRepository orderRoll, IOrderRollRepository repo) =>
-//{
-//    orderRoll. = orderId;
+app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll orderRoll, IOrderRollRepository repo) =>
+{
+    orderRoll.OrderId = orderId;
 
-//    var createdRoll = await service.AddAs(orderRoll);
+    var createdRoll = await repo.AddAsync(orderRoll);
 
-//    return Results.Created($"/order-rolls/{orderId}/{createdRoll.RollId}", createdRoll);
-//})
-//.WithTags("OrderRolls");
+    return Results.Created($"/order-rolls/{orderId}/{createdRoll.RollId}", createdRoll);
+})
+.WithTags("OrderRolls");
 
 
 //app.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRollPatch patch, IOrderRollRepository repo) =>
