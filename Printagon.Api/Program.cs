@@ -3,12 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
-using Printagon.Api.DTOs.Roll;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services;
-using Printagon.Api.Models;
-using Printagon.Api.DTOs.OrderRoll;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,17 +77,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 
-app.MapGet("/orders/{orderId}/order-rolls", async (IOrderRollRepository repo, Guid orderId) =>
-{
-    var result = await repo.GetAllByOrderIdAsync(orderId);
+app.MapGet("/order-rolls/{orderRollId}", async (IOrderRollRepository repo, Guid orderRollId) => {
 
-    return Results.Ok(result);
-})
-.WithTags("OrderRolls");
-
-
-app.Map("/order-rolls/{orderRollId}", async (IOrderRollRepository repo, Guid orderRollId) => { 
-    
     var roll = await repo.GetByIdAsync(orderRollId);
 
     if (roll == null)
@@ -118,6 +106,14 @@ app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollRepository repo, 
 
 
 
+app.MapGet("/orders/{orderId}/order-rolls", async (IOrderRollRepository repo, Guid orderId) =>
+{
+    var result = await repo.GetAllByOrderIdAsync(orderId);
+
+    return Results.Ok(result);
+})
+.WithTags("OrderRolls");
+
 
 app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll orderRoll, IOrderRollRepository repo) =>
 {
@@ -130,82 +126,31 @@ app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll order
 .WithTags("OrderRolls");
 
 
-//app.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRollPatch patch, IOrderRollRepository repo) =>
-//{
-//    var existingOrderRoll = await repo.GetOrderRollByIdAsync(orderRollId);
+app.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRoll updatedOrderRoll, IOrderRollRepository repo) =>
+{
+    var existingOrderRoll = await repo.GetByIdAsync(orderRollId);
 
-//    if (existingOrderRoll == null)
-//    {
-//        return Results.NotFound();
-//    }
+    if (existingOrderRoll == null)
+    {
+        return Results.NotFound();
+    }
 
-//    if (patch.OutputWeight.HasValue)
-//    {
-//        existingOrderRoll.OutputWeight = patch.OutputWeight.Value;
-//    }
+    existingOrderRoll.IntakeWeight = updatedOrderRoll.IntakeWeight;
+    existingOrderRoll.OutputWeight = updatedOrderRoll.OutputWeight;
+    existingOrderRoll.WebBreakCount = updatedOrderRoll.WebBreakCount;
+    existingOrderRoll.IsRestRoll = updatedOrderRoll.IsRestRoll;
+    existingOrderRoll.PaperType = updatedOrderRoll.PaperType;
+    existingOrderRoll.PaperGramWeight = updatedOrderRoll.PaperGramWeight;
+    existingOrderRoll.PaperWidth = updatedOrderRoll.PaperWidth;
+    existingOrderRoll.DeviationReason = updatedOrderRoll.DeviationReason;
 
-//    if (patch.MatchesOrderPaper.HasValue)
-//    {
-//        existingOrderRoll.MatchesOrderPaper = patch.MatchesOrderPaper.Value;
-//    }
+    repo.Update(existingOrderRoll);
 
-//    if (patch.DeviationReason != null)
-//    {
-//        existingOrderRoll.DeviationReason = patch.DeviationReason;
-//    }
+    //await repo.SaveChangesAsync();
 
-//    if (patch.IsRestRoll.HasValue)
-//    {
-//        existingOrderRoll.IsRestRoll = patch.IsRestRoll.Value;
-//    }
-
-//    if (patch.WebBreak.HasValue)
-//    {
-//        existingOrderRoll.WebBreak = patch.WebBreak.Value;
-//    }
-
-//    var updateRoll = await repo.UpdateOrderRollAsync(existingOrderRoll);
-
-//    if (updateRoll == null)
-//    {
-//        return Results.NotFound();
-//    }
-
-//    var options = new System.Text.Json.JsonSerializerOptions
-//    {
-//        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-//    };
-
-//    Console.WriteLine($"Updated roll with ID: {updateRoll.Id}");
-
-//    return Results.Json(updateRoll, options);
-//})
-//    .WithTags("OrderRolls");
-
-
-
-//app.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
-//{
-
-//    try
-//    {
-//        await repo.DeleteOrderRollByIdAsync(orderRollId);
-
-//        return Results.NoContent();
-//    }
-//    catch (KeyNotFoundException)
-//    {
-//        return Results.NotFound();
-//    }
-//})
-//    .WithTags("OrderRolls");
-//    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-//};
-
-//    //return Results.Json(roll, options);
-//})
-//    .WithTags("OrderRolls");
-
+    return Results.Ok(existingOrderRoll);
+})
+.WithTags("OrderRolls");
 
 
 app.Run();

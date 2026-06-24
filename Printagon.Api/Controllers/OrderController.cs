@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Printagon.Api.DTOs.Order;
-using Printagon.Api.Models;
 
 namespace Printagon.Api.Controllers
 {

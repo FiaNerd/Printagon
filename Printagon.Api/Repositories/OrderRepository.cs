@@ -17,6 +17,7 @@ namespace Printagon.Api.Repositories
         {
            return await _context.Orders
             .Include(o => o.OrderRolls)
+            .ThenInclude(or => or.Roll)
             .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
