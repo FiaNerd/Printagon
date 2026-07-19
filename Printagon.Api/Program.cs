@@ -25,9 +25,9 @@ builder.Services.AddScoped<IOrderRollRepository, OrderRollRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IRollService, RollService>();
 
-// OpenAPI (.NET 10)
+// OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
 // DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -42,8 +42,12 @@ using (var scope = app.Services.CreateScope())
     DbSeeder.Seed(context);
 }
 
-// OpenAPI UI
-app.MapOpenApi();
+// Swagger
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // API v1 group
 var v1 = app.MapGroup("/api/v1").WithOpenApi();
@@ -57,38 +61,58 @@ v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepos
 {
     var roll = await repo.GetByIdAsync(orderRollId);
     return roll is null ? Results.NotFound() : Results.Ok(roll);
-});
+})
+    .WithTags("OrderRolls");
 
 // GET all OrderRolls for an Order
 v1.MapGet("/orders/{orderId}/order-rolls", async (Guid orderId, IOrderRollRepository repo) =>
 {
     var rolls = await repo.GetAllByOrderIdAsync(orderId);
-    return Results.Ok(rolls);
-});
+
+    return rolls.Any()
+        ? Results.Ok(rolls)
+        : Results.NotFound($"No rolls found for order {orderId}");
+})
+    .WithTags("OrderRolls");
+
+// GET order and rolls
+v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId, IOrderRollRepository repo) =>
+{
+    var roll = await repo.GetByOrderAndRollAsync(orderId, rollId);
+    return roll is null ? Results.NotFound() : Results.Ok(roll);
+})
+    .WithTags("OrderRolls");
+
+
 
 // POST new OrderRoll
-v1.MapPost("/orders/{orderId}/order-rolls", async (Guid orderId, HttpContext http, IOrderRollRepository repo) =>
+v1.MapPost("/orders/{orderId}/order-rolls", async (Guid orderId, OrderRoll orderRoll, IOrderRollRepository repo) =>
 {
-    var orderRoll = await http.Request.ReadFromJsonAsync<OrderRoll>();
-
-    if (orderRoll is null)
-        return Results.BadRequest("Invalid JSON body");
-
     orderRoll.OrderId = orderId;
 
     var createdRoll = await repo.AddAsync(orderRoll);
 
     await repo.SaveChangesAsync();
 
+    var check = await repo.GetByIdAsync(createdRoll.RollId);
+
+    Console.WriteLine(check != null ? "POST sparad!" : "POST misslyckades");
+
+
     return Results.Created($"/api/v1/order-rolls/{createdRoll.Id}", createdRoll);
-});
+})
+    .WithTags("OrderRolls");
 
 
 // PATCH OrderRoll
 v1.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRoll updated, IOrderRollRepository repo) =>
 {
     var existing = await repo.GetByIdAsync(orderRollId);
-    if (existing is null) return Results.NotFound();
+   
+    if (existing is null) 
+    { 
+        return Results.NotFound();
+    } 
 
     existing.IntakeWeight = updated.IntakeWeight;
     existing.OutputWeight = updated.OutputWeight;
@@ -100,10 +124,13 @@ v1.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRoll upd
     existing.DeviationReason = updated.DeviationReason;
 
     repo.Update(existing);
+
     await repo.SaveChangesAsync();
 
     return Results.Ok(existing);
-});
+})
+    .WithTags("OrderRolls");
+
 
 // DELETE OrderRoll
 v1.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
@@ -115,6 +142,7 @@ v1.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRe
     await repo.SaveChangesAsync();
 
     return Results.NoContent();
-});
+})
+    .WithTags("OrderRolls");
 
 app.Run();

@@ -17,18 +17,16 @@ namespace Printagon.Api.Repositories
         {
             return await _context.OrderRolls
                 .Where(or => or.OrderId == orderId)
-                .Include(or => or.Roll)
-                .AsNoTracking()
                 .ToListAsync();
         }
+
 
         public async Task<OrderRoll?> GetByIdAsync(Guid orderRollId)
         {
             return await _context.OrderRolls
-                .Include(or => or.Order)
-                .Include(or => or.Roll)
                 .FirstOrDefaultAsync(or => or.Id == orderRollId);
         }
+
 
         public async Task<OrderRoll?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
         {
@@ -41,7 +39,6 @@ namespace Printagon.Api.Repositories
         public async Task<OrderRoll> AddAsync(OrderRoll orderRoll)
         {
             await _context.OrderRolls.AddAsync(orderRoll);
-            await _context.SaveChangesAsync();
 
             return orderRoll;
         }
