@@ -1,6 +1,5 @@
-using Printagon.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi;
+using Printagon.Api.Services.Interfaces;
 using Printagon.Api.Data;
 using Printagon.Api.Data.Seed;
 using Printagon.Api.Repositories;
@@ -9,149 +8,113 @@ using Printagon.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-//builder.Services.AddOpenApi();
-
+// Controllers
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
-/* --------------
-   Repositories
-   -------------- */
+// Repositories
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IRollRepository, RollRepository>();
 builder.Services.AddScoped<IOrderRollRepository, OrderRollRepository>();
 
-/* --------------
-   Services
-   -------------- */
+// Services
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IRollService, RollService>();
-//builder.Services.AddScoped<IOrderRollService, OrderRollService>();
 
+// OpenAPI (.NET 10)
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddOpenApi();
 
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-
-    {
-        Title = "Printagon API",
-        Version = "v1",
-        Description = "Internal API for managing orders, rolls and production data."
-    });
-});
-
-
+// DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("PrintagonDb"));
 
-
 var app = builder.Build();
 
+// Seed
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     DbSeeder.Seed(context);
 }
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// OpenAPI UI
+app.MapOpenApi();
+
+// API v1 group
+var v1 = app.MapGroup("/api/v1").WithOpenApi();
+
+// ---------------------------
+// ORDER ROLLS
+// ---------------------------
+
+// GET single OrderRoll
+v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    //app.MapOpenApi();
-}
-
-
-app.MapControllers();
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
-
-
-app.MapGet("/order-rolls/{orderRollId}", async (IOrderRollRepository repo, Guid orderRollId) => {
-
     var roll = await repo.GetByIdAsync(orderRollId);
+    return roll is null ? Results.NotFound() : Results.Ok(roll);
+});
 
-    if (roll == null)
-    {
-        return Results.NotFound();
-    }
-
-    return Results.Ok(roll);
-})
-    .WithTags("OrderRolls");
-
-
-app.MapGet("/order-rolls/{orderId}/{rollId}", async (IOrderRollRepository repo, Guid orderId, Guid rollId) =>
+// GET all OrderRolls for an Order
+v1.MapGet("/orders/{orderId}/order-rolls", async (Guid orderId, IOrderRollRepository repo) =>
 {
-    var roll = await repo.GetByOrderAndRollAsync(orderId, rollId);
+    var rolls = await repo.GetAllByOrderIdAsync(orderId);
+    return Results.Ok(rolls);
+});
 
-    if (roll == null)
-    {
-        return Results.NotFound();
-    }
-
-    return Results.Ok(roll);
-})
-.WithTags("OrderRolls");
-
-
-
-app.MapGet("/orders/{orderId}/order-rolls", async (IOrderRollRepository repo, Guid orderId) =>
+// POST new OrderRoll
+v1.MapPost("/orders/{orderId}/order-rolls", async (Guid orderId, HttpContext http, IOrderRollRepository repo) =>
 {
-    var result = await repo.GetAllByOrderIdAsync(orderId);
+    var orderRoll = await http.Request.ReadFromJsonAsync<OrderRoll>();
 
-    return Results.Ok(result);
-})
-.WithTags("OrderRolls");
+    if (orderRoll is null)
+        return Results.BadRequest("Invalid JSON body");
 
-
-app.MapPost("/order-rolls/{orderId}/rolls", async (Guid orderId, OrderRoll orderRoll, IOrderRollRepository repo) =>
-{
     orderRoll.OrderId = orderId;
 
     var createdRoll = await repo.AddAsync(orderRoll);
 
-    return Results.Created($"/order-rolls/{orderId}/{createdRoll.RollId}", createdRoll);
-})
-.WithTags("OrderRolls");
+    await repo.SaveChangesAsync();
+
+    return Results.Created($"/api/v1/order-rolls/{createdRoll.Id}", createdRoll);
+});
 
 
-app.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRoll updatedOrderRoll, IOrderRollRepository repo) =>
+// PATCH OrderRoll
+v1.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRoll updated, IOrderRollRepository repo) =>
 {
-    var existingOrderRoll = await repo.GetByIdAsync(orderRollId);
+    var existing = await repo.GetByIdAsync(orderRollId);
+    if (existing is null) return Results.NotFound();
 
-    if (existingOrderRoll == null)
-    {
-        return Results.NotFound();
-    }
+    existing.IntakeWeight = updated.IntakeWeight;
+    existing.OutputWeight = updated.OutputWeight;
+    existing.WebBreakCount = updated.WebBreakCount;
+    existing.IsRestRoll = updated.IsRestRoll;
+    existing.PaperType = updated.PaperType;
+    existing.PaperGramWeight = updated.PaperGramWeight;
+    existing.PaperWidth = updated.PaperWidth;
+    existing.DeviationReason = updated.DeviationReason;
 
-    existingOrderRoll.IntakeWeight = updatedOrderRoll.IntakeWeight;
-    existingOrderRoll.OutputWeight = updatedOrderRoll.OutputWeight;
-    existingOrderRoll.WebBreakCount = updatedOrderRoll.WebBreakCount;
-    existingOrderRoll.IsRestRoll = updatedOrderRoll.IsRestRoll;
-    existingOrderRoll.PaperType = updatedOrderRoll.PaperType;
-    existingOrderRoll.PaperGramWeight = updatedOrderRoll.PaperGramWeight;
-    existingOrderRoll.PaperWidth = updatedOrderRoll.PaperWidth;
-    existingOrderRoll.DeviationReason = updatedOrderRoll.DeviationReason;
+    repo.Update(existing);
+    await repo.SaveChangesAsync();
 
-    repo.Update(existingOrderRoll);
+    return Results.Ok(existing);
+});
 
-    //await repo.SaveChangesAsync();
+// DELETE OrderRoll
+v1.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
+{
+    var existing = await repo.GetByIdAsync(orderRollId);
+    if (existing is null) return Results.NotFound();
 
-    return Results.Ok(existingOrderRoll);
-})
-.WithTags("OrderRolls");
+    repo.Remove(existing);
+    await repo.SaveChangesAsync();
 
+    return Results.NoContent();
+});
 
 app.Run();
-

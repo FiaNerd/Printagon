@@ -1,6 +1,4 @@
-﻿using Printagon.Api.Models;
-
-namespace Printagon.Api.Repositories.Interfaces
+﻿namespace Printagon.Api.Repositories.Interfaces
 {
     public interface IOrderRollRepository
     {
