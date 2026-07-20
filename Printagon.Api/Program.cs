@@ -24,6 +24,7 @@ builder.Services.AddScoped<IOrderRollRepository, OrderRollRepository>();
 // Services
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IRollService, RollService>();
+builder.Services.AddScoped<IOrderRollService, OrderRollService>();
 
 // OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -56,6 +57,17 @@ var v1 = app.MapGroup("/api/v1").WithOpenApi();
 // ORDER ROLLS
 // ---------------------------
 
+// GET all OrderRolls for an Order
+v1.MapGet("/orders/{orderId}/order-rolls", async (Guid orderId, IOrderRollService service) =>
+{
+    var rolls = await service.GetAllByOrderIdAsync(orderId);
+
+    return rolls.Any()
+        ? Results.Ok(rolls)
+        : Results.NotFound($"No rolls found for order {orderId}");
+})
+    .WithTags("OrderRolls");
+
 // GET single OrderRoll
 v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
 {
@@ -64,16 +76,6 @@ v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepos
 })
     .WithTags("OrderRolls");
 
-// GET all OrderRolls for an Order
-v1.MapGet("/orders/{orderId}/order-rolls", async (Guid orderId, IOrderRollRepository repo) =>
-{
-    var rolls = await repo.GetAllByOrderIdAsync(orderId);
-
-    return rolls.Any()
-        ? Results.Ok(rolls)
-        : Results.NotFound($"No rolls found for order {orderId}");
-})
-    .WithTags("OrderRolls");
 
 // GET order and rolls
 v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId, IOrderRollRepository repo) =>

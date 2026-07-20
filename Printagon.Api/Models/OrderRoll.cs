@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 public class OrderRoll
 {
-    public Guid? Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     public Guid OrderId { get; set; }
 
