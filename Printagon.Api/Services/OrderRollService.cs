@@ -40,12 +40,61 @@ namespace Printagon.Api.Services
 
         public Task<OrderRollResponseDto?> GetByIdAsync(Guid orderRollId)
         {
-            throw new NotImplementedException();
+            var orderRoll = _orderRollRepository.GetByIdAsync(orderRollId);
+
+           var orderRollDto = orderRoll.Result;
+            if (orderRollDto == null)
+            {
+                return Task.FromResult<OrderRollResponseDto?>(null);
+            }
+            var responseDto = new OrderRollResponseDto
+            {
+                Id = orderRollDto.Id,
+                OrderId = orderRollDto.OrderId,
+                RollId = orderRollDto.RollId,
+                IntakeWeight = orderRollDto.IntakeWeight,
+                OutputWeight = orderRollDto.OutputWeight,
+                ConsumedWeight = orderRollDto.ConsumedWeight,
+                PaperType = orderRollDto.PaperType,
+                PaperGramWeight = orderRollDto.PaperGramWeight,
+                PaperWidth = orderRollDto.PaperWidth,
+                MatchesOrderPaper = orderRollDto.MatchesOrderPaper,
+                DeviationReason = orderRollDto.DeviationReason,
+                WebBreakCount = orderRollDto.WebBreakCount,
+                IsRestRoll = orderRollDto.IsRestRoll,
+                CreatedAt = orderRollDto.CreatedAt
+            };
+
+            return Task.FromResult<OrderRollResponseDto?>(responseDto);
         }
 
         public Task<OrderRollResponseDto?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
         {
-            throw new NotImplementedException();
+            var orderRoll = _orderRollRepository.GetByOrderAndRollAsync(orderId, rollId);
+            var orderRollDto = orderRoll.Result;
+            if (orderRollDto == null)
+            {
+                return Task.FromResult<OrderRollResponseDto?>(null);
+            }
+            var responseDto = new OrderRollResponseDto
+            {
+                Id = orderRollDto.Id,
+                OrderId = orderRollDto.OrderId,
+                RollId = orderRollDto.RollId,
+                IntakeWeight = orderRollDto.IntakeWeight,
+                OutputWeight = orderRollDto.OutputWeight,
+                ConsumedWeight = orderRollDto.ConsumedWeight,
+                PaperType = orderRollDto.PaperType,
+                PaperGramWeight = orderRollDto.PaperGramWeight,
+                PaperWidth = orderRollDto.PaperWidth,
+                MatchesOrderPaper = orderRollDto.MatchesOrderPaper,
+                DeviationReason = orderRollDto.DeviationReason,
+                WebBreakCount = orderRollDto.WebBreakCount,
+                IsRestRoll = orderRollDto.IsRestRoll,
+                CreatedAt = orderRollDto.CreatedAt
+            };
+
+            return Task.FromResult<OrderRollResponseDto?>(responseDto);
         }
 
         public Task<OrderRollResponseDto> AddAsync(OrderRollCreateDto dto)

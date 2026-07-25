@@ -69,18 +69,18 @@ v1.MapGet("/orders/{orderId}/order-rolls", async (Guid orderId, IOrderRollServic
     .WithTags("OrderRolls");
 
 // GET single OrderRoll
-v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
+v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollService service) =>
 {
-    var roll = await repo.GetByIdAsync(orderRollId);
+    var roll = await service.GetByIdAsync(orderRollId);
     return roll is null ? Results.NotFound() : Results.Ok(roll);
 })
     .WithTags("OrderRolls");
 
 
 // GET order and rolls
-v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId, IOrderRollRepository repo) =>
+v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId, IOrderRollService service) =>
 {
-    var roll = await repo.GetByOrderAndRollAsync(orderId, rollId);
+    var roll = await service.GetByOrderAndRollAsync(orderId, rollId);
     return roll is null ? Results.NotFound() : Results.Ok(roll);
 })
     .WithTags("OrderRolls");
