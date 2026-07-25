@@ -10,9 +10,9 @@
 
         Task<OrderRoll> AddAsync(OrderRoll orderRoll);
 
-        void Update(OrderRoll orderRoll);
+        Task UpdateAsync(OrderRoll orderRoll);
 
-        void Remove(OrderRoll orderRoll);
+        Task DeleteAsync(OrderRoll orderRoll);
 
         Task SaveChangesAsync();
     }

@@ -139,12 +139,44 @@ namespace Printagon.Api.Services
         }
 
 
-        public Task<OrderRollResponseDto?> UpdateAsync(Guid id, OrderRollUpdateDto dto)
+        public async Task<OrderRollResponseDto?> UpdateAsync(Guid id, OrderRollUpdateDto dto)
         {
-            throw new NotImplementedException();
+            var existing = await _orderRollRepository.GetByIdAsync(id);
+
+            if (existing == null)
+            {
+                return null;
+            }
+
+            existing.OutputWeight = dto.OutputWeight ?? existing.OutputWeight;
+            existing.MatchesOrderPaper = dto.MatchesOrderPaper ?? existing.MatchesOrderPaper;
+            existing.DeviationReason = dto.DeviationReason ?? existing.DeviationReason;
+            existing.IsRestRoll = dto.IsRestRoll ?? existing.IsRestRoll;
+
+            await _orderRollRepository.UpdateAsync(existing);
+
+            return new OrderRollResponseDto
+            {
+                Id = existing.Id,
+                OrderId = existing.OrderId,
+                RollId = existing.RollId,
+                IntakeWeight = existing.IntakeWeight,
+                OutputWeight = existing.OutputWeight,
+                ConsumedWeight = existing.ConsumedWeight,
+                PaperType = existing.PaperType,
+                PaperGramWeight = existing.PaperGramWeight,
+                PaperWidth = existing.PaperWidth,
+                MatchesOrderPaper = existing.MatchesOrderPaper,
+                DeviationReason = existing.DeviationReason,
+                WebBreakCount = existing.WebBreakCount,
+                IsRestRoll = existing.IsRestRoll,
+                CreatedAt = existing.CreatedAt
+            };
         }
 
-        public Task<bool> RemoveAsync(Guid id)
+
+
+        public Task<bool> DeleteAsync(Guid id)
         {
             throw new NotImplementedException();
         }

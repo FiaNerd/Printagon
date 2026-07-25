@@ -129,7 +129,7 @@ v1.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRoll upd
     existing.PaperWidth = updated.PaperWidth;
     existing.DeviationReason = updated.DeviationReason;
 
-    repo.Update(existing);
+    repo.UpdateAsync(existing);
 
     await repo.SaveChangesAsync();
 
@@ -144,7 +144,7 @@ v1.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRe
     var existing = await repo.GetByIdAsync(orderRollId);
     if (existing is null) return Results.NotFound();
 
-    repo.Remove(existing);
+    repo.DeleteAsync(existing);
     await repo.SaveChangesAsync();
 
     return Results.NoContent();

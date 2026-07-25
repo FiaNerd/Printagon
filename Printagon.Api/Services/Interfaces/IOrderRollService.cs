@@ -12,5 +12,5 @@ public interface IOrderRollService
 
     Task<OrderRollResponseDto?> UpdateAsync(Guid id, OrderRollUpdateDto dto);
 
-    Task<bool> RemoveAsync(Guid id);
+    Task<bool> DeleteAsync(Guid id);
 }

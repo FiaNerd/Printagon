@@ -10,6 +10,5 @@ namespace Printagon.Api.Services.Interfaces
         Task<RollResponseDto> CreateRollAsync(Guid orerId, RollCreateDto createRoll);
         Task<RollResponseDto?> UpdateRollAsync(Guid orderId, Guid rollId, RollUpdateDto updatedRoll);
         Task DeleteRollAsync(Guid rollId);
-
     }
 }
