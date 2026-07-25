@@ -1,4 +1,5 @@
-﻿using Printagon.Api.DTOs.OrderRoll;
+﻿using Microsoft.EntityFrameworkCore;
+using Printagon.Api.DTOs.OrderRoll;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 
@@ -71,11 +72,14 @@ namespace Printagon.Api.Services
         public Task<OrderRollResponseDto?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
         {
             var orderRoll = _orderRollRepository.GetByOrderAndRollAsync(orderId, rollId);
+
             var orderRollDto = orderRoll.Result;
+
             if (orderRollDto == null)
             {
                 return Task.FromResult<OrderRollResponseDto?>(null);
             }
+
             var responseDto = new OrderRollResponseDto
             {
                 Id = orderRollDto.Id,
@@ -97,10 +101,43 @@ namespace Printagon.Api.Services
             return Task.FromResult<OrderRollResponseDto?>(responseDto);
         }
 
-        public Task<OrderRollResponseDto> AddAsync(OrderRollCreateDto dto)
+        public async Task<OrderRollResponseDto> AddAsync(OrderRollCreateDto dto)
         {
-            throw new NotImplementedException();
+            var newOrderRoll = new OrderRoll
+            {
+                Id = Guid.NewGuid(),
+                OrderId = dto.OrderId,
+                RollId = dto.RollId,
+                IntakeWeight = dto.IntakeWeight,
+                PaperType = dto.PaperType,
+                PaperGramWeight = dto.PaperGramWeight,
+                PaperWidth = dto.PaperWidth,
+                IsRestRoll = dto.IsRestRoll,
+                DeviationReason = dto.DeviationReason,
+                WebBreakCount = dto.WebBreakCount
+            };
+
+            await _orderRollRepository.AddAsync(newOrderRoll);
+
+            return new OrderRollResponseDto
+            {
+                Id = newOrderRoll.Id,
+                OrderId = newOrderRoll.OrderId,
+                RollId = newOrderRoll.RollId,
+                IntakeWeight = newOrderRoll.IntakeWeight,
+                OutputWeight = newOrderRoll.OutputWeight,
+                ConsumedWeight = newOrderRoll.ConsumedWeight,
+                PaperType = newOrderRoll.PaperType,
+                PaperGramWeight = newOrderRoll.PaperGramWeight,
+                PaperWidth = newOrderRoll.PaperWidth,
+                MatchesOrderPaper = newOrderRoll.MatchesOrderPaper,
+                DeviationReason = newOrderRoll.DeviationReason,
+                WebBreakCount = newOrderRoll.WebBreakCount,
+                IsRestRoll = newOrderRoll.IsRestRoll,
+                CreatedAt = newOrderRoll.CreatedAt
+            };
         }
+
 
         public Task<OrderRollResponseDto?> UpdateAsync(Guid id, OrderRollUpdateDto dto)
         {

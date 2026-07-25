@@ -5,6 +5,7 @@ using Printagon.Api.Data.Seed;
 using Printagon.Api.Repositories;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services;
+using Printagon.Api.DTOs.OrderRoll;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,7 +79,10 @@ v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollServi
 
 
 // GET order and rolls
-v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId, IOrderRollService service) =>
+v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (
+    Guid orderId, 
+    Guid rollId, 
+    IOrderRollService service) =>
 {
     var roll = await service.GetByOrderAndRollAsync(orderId, rollId);
     return roll is null ? Results.NotFound() : Results.Ok(roll);
@@ -88,22 +92,22 @@ v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (Guid orderId, Guid rollId, 
 
 
 // POST new OrderRoll
-v1.MapPost("/orders/{orderId}/order-rolls", async (Guid orderId, OrderRoll orderRoll, IOrderRollRepository repo) =>
+v1.MapPost("/orders/{orderId}/order-rolls", async (
+    Guid orderId,
+    OrderRollCreateDto dto,
+    IOrderRollService service
+) =>
 {
-    orderRoll.OrderId = orderId;
+    dto.OrderId = orderId;
 
-    var createdRoll = await repo.AddAsync(orderRoll);
+    var createdRoll = await service.AddAsync(dto);
 
-    await repo.SaveChangesAsync();
-
-    var check = await repo.GetByIdAsync(createdRoll.RollId);
-
-    Console.WriteLine(check != null ? "POST sparad!" : "POST misslyckades");
-
-
-    return Results.Created($"/api/v1/order-rolls/{createdRoll.Id}", createdRoll);
+    return Results.Created(
+        $"/api/v1/orders/{createdRoll.Id}/order-rolls",
+        createdRoll
+    );
 })
-    .WithTags("OrderRolls");
+.WithTags("OrderRolls");
 
 
 // PATCH OrderRoll

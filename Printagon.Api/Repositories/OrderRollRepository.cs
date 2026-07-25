@@ -40,6 +40,8 @@ namespace Printagon.Api.Repositories
         {
             await _context.OrderRolls.AddAsync(orderRoll);
 
+            await _context.SaveChangesAsync();
+
             return orderRoll;
         }
 

@@ -8,6 +8,7 @@ namespace Printagon.Api.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Roll> Rolls { get; set; }
         public DbSet<OrderRoll> OrderRolls { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
