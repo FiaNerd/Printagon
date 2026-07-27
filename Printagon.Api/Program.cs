@@ -111,41 +111,40 @@ v1.MapPost("/orders/{orderId}/order-rolls", async (
 
 
 // PATCH OrderRoll
-v1.MapPatch("/order-rolls/{orderRollId}", async (Guid orderRollId, OrderRoll updated, IOrderRollRepository repo) =>
+v1.MapPatch("/order-rolls/{orderRollId}", async (
+    Guid orderRollId,
+    OrderRollUpdateDto dto,
+    IOrderRollService service
+) =>
 {
-    var existing = await repo.GetByIdAsync(orderRollId);
-   
-    if (existing is null) 
-    { 
+    var updated = await service.UpdateAsync(orderRollId, dto);
+
+    if (updated is null)
+    {
         return Results.NotFound();
-    } 
+    }
 
-    existing.IntakeWeight = updated.IntakeWeight;
-    existing.OutputWeight = updated.OutputWeight;
-    existing.WebBreakCount = updated.WebBreakCount;
-    existing.IsRestRoll = updated.IsRestRoll;
-    existing.PaperType = updated.PaperType;
-    existing.PaperGramWeight = updated.PaperGramWeight;
-    existing.PaperWidth = updated.PaperWidth;
-    existing.DeviationReason = updated.DeviationReason;
-
-    repo.UpdateAsync(existing);
-
-    await repo.SaveChangesAsync();
-
-    return Results.Ok(existing);
+    return Results.Ok(updated);
 })
-    .WithTags("OrderRolls");
+.WithTags("OrderRolls");
+
 
 
 // DELETE OrderRoll
-v1.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollRepository repo) =>
+v1.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollService service) =>
 {
-    var existing = await repo.GetByIdAsync(orderRollId);
-    if (existing is null) return Results.NotFound();
+    var existing = await service.GetByIdAsync(orderRollId);
 
-    repo.DeleteAsync(existing);
-    await repo.SaveChangesAsync();
+    if (existing is null) { 
+        return Results.NotFound(); 
+    }
+
+   var deleted =  await service.DeleteAsync(orderRollId);
+
+    if(!deleted)
+    {
+        return Results.BadRequest();
+    }
 
     return Results.NoContent();
 })

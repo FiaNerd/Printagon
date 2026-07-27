@@ -144,14 +144,13 @@ namespace Printagon.Api.Services
             var existing = await _orderRollRepository.GetByIdAsync(id);
 
             if (existing == null)
-            {
                 return null;
-            }
 
             existing.OutputWeight = dto.OutputWeight ?? existing.OutputWeight;
             existing.MatchesOrderPaper = dto.MatchesOrderPaper ?? existing.MatchesOrderPaper;
             existing.DeviationReason = dto.DeviationReason ?? existing.DeviationReason;
             existing.IsRestRoll = dto.IsRestRoll ?? existing.IsRestRoll;
+            existing.WebBreakCount = dto.WebBreak ?? existing.WebBreakCount;
 
             await _orderRollRepository.UpdateAsync(existing);
 
@@ -176,12 +175,22 @@ namespace Printagon.Api.Services
 
 
 
-        public Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
-        }
+            if (id == Guid.Empty)
+            {
+                return false;
+            }
 
-   
+            var orderRoll =  await _orderRollRepository.GetByIdAsync(id);
+           
+            if (orderRoll == null)
+            {
+                return false;
+            }
+
+            return await _orderRollRepository.DeleteAsync(orderRoll);
+        }
 
 
         //public async Task<OrderRollResponseDto?> GetOrderAndRollByIdAsync(Guid orderId, Guid rollId)

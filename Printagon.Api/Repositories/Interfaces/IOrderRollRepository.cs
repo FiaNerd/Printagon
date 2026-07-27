@@ -10,9 +10,9 @@
 
         Task<OrderRoll> AddAsync(OrderRoll orderRoll);
 
-        Task UpdateAsync(OrderRoll orderRoll);
+        Task<bool> UpdateAsync(OrderRoll orderRoll);
 
-        Task DeleteAsync(OrderRoll orderRoll);
+        Task<bool> DeleteAsync(OrderRoll orderRoll);
 
         Task SaveChangesAsync();
     }

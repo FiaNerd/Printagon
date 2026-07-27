@@ -45,22 +45,30 @@ namespace Printagon.Api.Repositories
             return orderRoll;
         }
 
-        public async Task UpdateAsync(OrderRoll orderRoll)
+        public async Task<bool> UpdateAsync(OrderRoll orderRoll)
         {
 
             _context.OrderRolls.Update(orderRoll);
 
             await _context.SaveChangesAsync();
+
+            return true;
         }
 
-        public async Task DeleteAsync(OrderRoll orderRoll)
+        public async Task<bool> DeleteAsync(OrderRoll orderRoll)
         {
             _context.OrderRolls.Remove(orderRoll);
+
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }
+
+      
     }
 }
