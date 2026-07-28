@@ -59,95 +59,95 @@ var v1 = app.MapGroup("/api/v1").WithOpenApi();
 // ---------------------------
 
 // GET all OrderRolls for an Order
-v1.MapGet("/orders/{orderId}/order-rolls", async (Guid orderId, IOrderRollService service) =>
-{
-    var rolls = await service.GetAllByOrderIdAsync(orderId);
+//v1.MapGet("/orders/{orderId}/order-rolls", async (Guid orderId, IOrderRollService service) =>
+//{
+//    var rolls = await service.GetAllByOrderIdAsync(orderId);
 
-    return rolls.Any()
-        ? Results.Ok(rolls)
-        : Results.NotFound($"No rolls found for order {orderId}");
-})
-    .WithTags("OrderRolls");
+//    return rolls.Any()
+//        ? Results.Ok(rolls)
+//        : Results.NotFound($"No rolls found for order {orderId}");
+//})
+//    .WithTags("OrderRolls");
 
-// GET single OrderRoll
-v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollService service) =>
-{
-    var roll = await service.GetByIdAsync(orderRollId);
-    return roll is null ? Results.NotFound() : Results.Ok(roll);
-})
-    .WithTags("OrderRolls");
-
-
-// GET order and rolls
-v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (
-    Guid orderId, 
-    Guid rollId, 
-    IOrderRollService service) =>
-{
-    var roll = await service.GetByOrderAndRollAsync(orderId, rollId);
-    return roll is null ? Results.NotFound() : Results.Ok(roll);
-})
-    .WithTags("OrderRolls");
+//// GET single OrderRoll
+//v1.MapGet("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollService service) =>
+//{
+//    var roll = await service.GetByIdAsync(orderRollId);
+//    return roll is null ? Results.NotFound() : Results.Ok(roll);
+//})
+//    .WithTags("OrderRolls");
 
 
-
-// POST new OrderRoll
-v1.MapPost("/orders/{orderId}/order-rolls", async (
-    Guid orderId,
-    OrderRollCreateDto dto,
-    IOrderRollService service
-) =>
-{
-    dto.OrderId = orderId;
-
-    var createdRoll = await service.AddAsync(dto);
-
-    return Results.Created(
-        $"/api/v1/orders/{createdRoll.Id}/order-rolls",
-        createdRoll
-    );
-})
-.WithTags("OrderRolls");
-
-
-// PATCH OrderRoll
-v1.MapPatch("/order-rolls/{orderRollId}", async (
-    Guid orderRollId,
-    OrderRollUpdateDto dto,
-    IOrderRollService service
-) =>
-{
-    var updated = await service.UpdateAsync(orderRollId, dto);
-
-    if (updated is null)
-    {
-        return Results.NotFound();
-    }
-
-    return Results.Ok(updated);
-})
-.WithTags("OrderRolls");
+//// GET order and rolls
+//v1.MapGet("/orders/{orderId}/rolls/{rollId}", async (
+//    Guid orderId, 
+//    Guid rollId, 
+//    IOrderRollService service) =>
+//{
+//    var roll = await service.GetByOrderAndRollAsync(orderId, rollId);
+//    return roll is null ? Results.NotFound() : Results.Ok(roll);
+//})
+//    .WithTags("OrderRolls");
 
 
 
-// DELETE OrderRoll
-v1.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollService service) =>
-{
-    var existing = await service.GetByIdAsync(orderRollId);
+//// POST new OrderRoll
+//v1.MapPost("/orders/{orderId}/order-rolls", async (
+//    Guid orderId,
+//    OrderRollCreateDto dto,
+//    IOrderRollService service
+//) =>
+//{
+//    dto.OrderId = orderId;
 
-    if (existing is null) { 
-        return Results.NotFound(); 
-    }
+//    var createdRoll = await service.AddAsync(dto);
 
-   var deleted =  await service.DeleteAsync(orderRollId);
+//    return Results.Created(
+//        $"/api/v1/orders/{createdRoll.Id}/order-rolls",
+//        createdRoll
+//    );
+//})
+//.WithTags("OrderRolls");
 
-    if(!deleted)
-    {
-        return Results.BadRequest();
-    }
 
-    return Results.NoContent();
-})
-    .WithTags("OrderRolls");
+//// PATCH OrderRoll
+//v1.MapPatch("/order-rolls/{orderRollId}", async (
+//    Guid orderRollId,
+//    OrderRollUpdateDto dto,
+//    IOrderRollService service
+//) =>
+//{
+//    var updated = await service.UpdateAsync(orderRollId, dto);
+
+//    if (updated is null)
+//    {
+//        return Results.NotFound();
+//    }
+
+//    return Results.Ok(updated);
+//})
+//.WithTags("OrderRolls");
+
+
+
+//// DELETE OrderRoll
+//v1.MapDelete("/order-rolls/{orderRollId}", async (Guid orderRollId, IOrderRollService service) =>
+//{
+//    var existing = await service.GetByIdAsync(orderRollId);
+
+//    if (existing is null) { 
+//        return Results.NotFound(); 
+//    }
+
+//   var deleted =  await service.DeleteAsync(orderRollId);
+
+//    if(!deleted)
+//    {
+//        return Results.BadRequest();
+//    }
+
+//    return Results.NoContent();
+//})
+//    .WithTags("OrderRolls");
 
 app.Run();
