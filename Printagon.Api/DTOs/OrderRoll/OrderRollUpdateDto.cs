@@ -4,5 +4,5 @@
     public bool? MatchesOrderPaper { get; set; }
     public string? DeviationReason { get; set; }
     public bool? IsRestRoll { get; set; }
-    public int? WebBreak { get; set; }
+    public int? WebBreakCount { get; set; }
 }
