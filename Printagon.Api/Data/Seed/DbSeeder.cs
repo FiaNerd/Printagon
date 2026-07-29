@@ -1,7 +1,6 @@
 ﻿using Printagon.Api.Enums;
 using Printagon.Api.Models;
 
-
 namespace Printagon.Api.Data.Seed
 {
     public class DbSeeder
@@ -45,9 +44,6 @@ namespace Printagon.Api.Data.Seed
                 RollNumber = 1,
                 RollWeight = 998,
                 RollWeightLeftOver = 0,
-                PaperType = "Holmen View HS",
-                PaperGramWeight = 53,
-                PaperWidth = 1144,
                 CreatedAt = DateTime.Now
             };
 
@@ -57,9 +53,6 @@ namespace Printagon.Api.Data.Seed
                 RollNumber = 2,
                 RollWeight = 1000,
                 RollWeightLeftOver = 0,
-                PaperType = "Holmen View HS",
-                PaperGramWeight = 54,
-                PaperWidth = 1144,
                 CreatedAt = DateTime.Now
             };
 
@@ -69,9 +62,6 @@ namespace Printagon.Api.Data.Seed
                 RollNumber = 3,
                 RollWeight = 1000,
                 RollWeightLeftOver = 0,
-                PaperType = "Skogh papper",
-                PaperGramWeight = 45,
-                PaperWidth = 845,
                 CreatedAt = DateTime.Now
             };
 
@@ -81,80 +71,41 @@ namespace Printagon.Api.Data.Seed
                 RollNumber = 4,
                 RollWeight = 978,
                 RollWeightLeftOver = 0,
-                PaperType = "Skogh papper",
-                PaperGramWeight = 45,
-                PaperWidth = 845,
                 CreatedAt = DateTime.Now
             };
 
-
-
             // ----------- ORDER ROLLS -----------
-
-            var orderRoll1 = new OrderRoll
+            OrderRoll CreateOrderRoll(Order order, Roll roll, int intake, int output)
             {
-                Order = order1,
-                Roll = roll1,
+                return new OrderRoll
+                {
+                    Order = order,
+                    Roll = roll,
 
-                IntakeWeight = 998,
-                OutputWeight = 564,
+                    IntakeWeight = intake,
+                    OutputWeight = output,
 
-                PaperType = roll1.PaperType,
-                PaperGramWeight = roll1.PaperGramWeight,
-                PaperWidth = roll1.PaperWidth,
+                    // ALWAYS copy paper from ORDER
+                    PaperType = order.PaperType,
+                    PaperGramWeight = order.PaperGramWeight,
+                    PaperWidth = order.PaperWidth,
 
-                MatchesOrderPaper =
-                  order1.PaperType == roll1.PaperType &&
-                  order1.PaperGramWeight == roll1.PaperGramWeight &&
-                  order1.PaperWidth == roll1.PaperWidth
-            };
+                    MatchesOrderPaper = true,
+                    CreatedAt = DateTime.Now
+                };
+            }
 
-            var orderRoll2 = new OrderRoll
-            {
-                Order = order1,
-                Roll = roll2,
-                IntakeWeight = 1000,
-                OutputWeight = 800
-            };
+            var orderRoll1 = CreateOrderRoll(order1, roll1, 998, 564);
+            var orderRoll2 = CreateOrderRoll(order1, roll2, 1000, 800);
+            var orderRoll3 = CreateOrderRoll(order1, roll3, 1000, 800);
 
-            var orderRoll3 = new OrderRoll
-            {
-                Order = order1,
-                Roll = roll3,
-                IntakeWeight = 1000,
-                OutputWeight = 800
-            };
-            var orderRoll4 = new OrderRoll
-            {
-                Order = order2,
-                Roll = roll4,
-                IntakeWeight = 1000,
-                OutputWeight = 800 
-            };
+            var orderRoll4 = CreateOrderRoll(order2, roll4, 1000, 800);
+            var orderRoll5 = CreateOrderRoll(order2, roll3, 1000, 900);
+            var orderRoll6 = CreateOrderRoll(order2, roll2, 980, 0);
 
-            var orderRoll5 = new OrderRoll
-            {
-                Order = order2,
-                Roll = roll3,
-                IntakeWeight = 1000,
-                OutputWeight = 900 
-            };
-
-            var orderRoll6 = new OrderRoll
-            {
-                Order = order2,
-                Roll = roll2,
-                IntakeWeight = 980,
-                OutputWeight = null
-            };
-
-
-          
-
-
-            context.OrderRolls.AddRange(orderRoll1, orderRoll2, orderRoll3, orderRoll4, orderRoll5, orderRoll6);
             context.Orders.AddRange(order1, order2);
             context.Rolls.AddRange(roll1, roll2, roll3, roll4);
+            context.OrderRolls.AddRange(orderRoll1, orderRoll2, orderRoll3, orderRoll4, orderRoll5, orderRoll6);
 
             context.SaveChanges();
         }
