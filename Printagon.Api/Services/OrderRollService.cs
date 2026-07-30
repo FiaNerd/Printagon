@@ -33,12 +33,11 @@ namespace Printagon.Api.Services
                 return orderRoll == null ? null : MapToDto(orderRoll);
             }
 
-            public async Task<OrderRollResponseDto> AddAsync(OrderRollCreateDto dto)
+            public async Task<OrderRollResponseDto> AddAsync(Guid orderId, OrderRollCreateDto dto)
             {
                 var newOrderRoll = new OrderRoll
                 {
-                    Id = Guid.NewGuid(),
-                    OrderId = dto.OrderId,
+                    OrderId = orderId,
                     RollId = dto.RollId,
                     IntakeWeight = dto.IntakeWeight,
                     PaperType = dto.PaperType,
@@ -46,8 +45,7 @@ namespace Printagon.Api.Services
                     PaperWidth = dto.PaperWidth,
                     IsRestRoll = dto.IsRestRoll,
                     DeviationReason = dto.DeviationReason,
-                    WebBreakCount = dto.WebBreakCount,
-                    CreatedAt = DateTime.UtcNow
+                    WebBreakCount = dto.WebBreakCount
                 };
 
                 await _orderRollRepository.AddAsync(newOrderRoll);

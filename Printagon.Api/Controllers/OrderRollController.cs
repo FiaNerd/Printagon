@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Printagon.Api.DTOs.OrderRoll;
 
 namespace Printagon.Api.Controllers
 {
@@ -21,13 +22,30 @@ namespace Printagon.Api.Controllers
             return Ok(orderRolls);
         }
 
-        // GET: /api/orders/{orderId}/rolls/{rollId} - order and rolls based on id
-        [HttpGet("{orderId}/rolls/{rollId}")]
+        // GET: /api/orders/{orderId}/rolls/{rollId}
+        // IMPORTANT: Named route so CreatedAtRoute can find it
+        [HttpGet("{orderId}/rolls/{rollId}", Name = "GetOrderRollById")]
         public async Task<IActionResult> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
         {
-            var orderRoll = _orderRollService.GetByOrderAndRollAsync(orderId, rollId);
+            var orderRoll = await _orderRollService.GetByOrderAndRollAsync(orderId, rollId);
+
+            if (orderRoll == null)
+                return NotFound();
 
             return Ok(orderRoll);
+        }
+
+        // POST: /api/orders/{orderId}/order-rolls
+        [HttpPost("{orderId}/order-rolls")]
+        public async Task<IActionResult> AddAsync(Guid orderId, [FromBody] OrderRollCreateDto dto)
+        {
+            var created = await _orderRollService.AddAsync(orderId, dto);
+
+            return CreatedAtRoute(
+                "GetOrderRollById",
+                new { orderId = orderId, rollId = created.RollId },
+                created
+            );
         }
     }
 }

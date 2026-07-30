@@ -8,7 +8,7 @@ public interface IOrderRollService
 
     Task<OrderRollResponseDto?> GetByOrderAndRollAsync(Guid orderId, Guid rollId);
 
-    Task<OrderRollResponseDto> AddAsync(OrderRollCreateDto dto);
+    Task<OrderRollResponseDto> AddAsync(Guid orderId, OrderRollCreateDto dto);
 
     Task<OrderRollResponseDto?> UpdateAsync(Guid id, OrderRollUpdateDto dto);
 
