@@ -17,10 +17,17 @@ namespace Printagon.Api.Controllers
         [HttpGet("{orderId}/order-rolls")]
         public async Task<IActionResult> GetAllByOrderIdAsync(Guid orderId)
         {
-            Console.WriteLine("Controller körs! orderId = " + orderId);
-
             var orderRolls = await _orderRollService.GetAllByOrderIdAsync(orderId);
             return Ok(orderRolls);
+        }
+
+        // GET: /api/orders/{orderId}/rolls/{rollId} - order and rolls based on id
+        [HttpGet("{orderId}/rolls/{rollId}")]
+        public async Task<IActionResult> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
+        {
+            var orderRoll = _orderRollService.GetByOrderAndRollAsync(orderId, rollId);
+
+            return Ok(orderRoll);
         }
     }
 }
