@@ -1,12 +1,14 @@
-﻿namespace Printagon.Api.Repositories.Interfaces
+﻿using Printagon.Api.Models;
+
+namespace Printagon.Api.Repositories.Interfaces
 {
     public interface IOrderRollRepository
     {
-        Task<IEnumerable<OrderRoll>> GetAllByOrderIdAsync(Guid orderId);
+        Task<IEnumerable<OrderRoll>> GetAllByOrderNumberAsync(int orderNumber);
 
-        Task<OrderRoll?> GetByIdAsync(Guid orderRollId);
+        Task<OrderRoll?> GetByIdAsync(Guid id);
 
-        Task<OrderRoll?> GetByOrderAndRollAsync(Guid orderId, Guid rollId);
+        Task<OrderRoll?> GetByOrderAndRollAsync(int orderNumber, int rollNumber);
 
         Task<OrderRoll> AddAsync(OrderRoll orderRoll);
 

@@ -15,30 +15,30 @@ namespace Printagon.Api.Services
                 _orderRollRepository = orderRollRepository;
             }
 
-            public async Task<IEnumerable<OrderRollResponseDto>> GetAllByOrderIdAsync(Guid orderId)
+            public async Task<IEnumerable<OrderRollResponseDto>> GetAllByOrderNumberAsync(int orderNumber)
             {
-                var orderRolls = await _orderRollRepository.GetAllByOrderIdAsync(orderId);
+                var orderRolls = await _orderRollRepository.GetAllByOrderNumberAsync(orderNumber);
                 return orderRolls.Select(MapToDto).ToList();
             }
 
-            public async Task<OrderRollResponseDto?> GetByIdAsync(Guid orderRollId)
+            public async Task<OrderRollResponseDto?> GetByIdAsync(Guid orderRollNumber)
             {
-                var orderRoll = await _orderRollRepository.GetByIdAsync(orderRollId);
+                var orderRoll = await _orderRollRepository.GetByIdAsync(orderRollNumber);
                 return orderRoll == null ? null : MapToDto(orderRoll);
             }
 
-            public async Task<OrderRollResponseDto?> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
+            public async Task<OrderRollResponseDto?> GetByOrderAndRollAsync(int orderNumber, int rollNumber)
             {
-                var orderRoll = await _orderRollRepository.GetByOrderAndRollAsync(orderId, rollId);
+                var orderRoll = await _orderRollRepository.GetByOrderAndRollAsync(orderNumber, rollNumber);
                 return orderRoll == null ? null : MapToDto(orderRoll);
             }
 
-            public async Task<OrderRollResponseDto> AddAsync(Guid orderId, OrderRollCreateDto dto)
+            public async Task<OrderRollResponseDto> AddAsync(int orderNumber, OrderRollCreateDto dto)
             {
                 var newOrderRoll = new OrderRoll
                 {
-                    OrderId = orderId,
-                    RollId = dto.RollId,
+                    OrderNumber = orderNumber,
+                    RollNumber = dto.RollNumber,
                     IntakeWeight = dto.IntakeWeight,
                     PaperType = dto.PaperType,
                     PaperGramWeight = dto.PaperGramWeight,
@@ -85,8 +85,8 @@ namespace Printagon.Api.Services
                 return new OrderRollResponseDto
                 {
                     Id = or.Id,
-                    OrderId = or.OrderId,
-                    RollId = or.RollId,
+                    OrderNumber = or.OrderNumber,
+                    RollNumber = or.RollNumber,
                     IntakeWeight = or.IntakeWeight,
                     OutputWeight = or.OutputWeight,
                     ConsumedWeight = or.ConsumedWeight,

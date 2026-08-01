@@ -14,9 +14,19 @@ namespace Printagon.Api.Data
         {
         }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Order>()
+                .HasKey(o => o.Id);
+
+            modelBuilder.Entity<Roll>()
+                .HasKey(r => r.Id);
+
+            modelBuilder.Entity<OrderRoll>()
+                .HasKey(or => or.Id);
         }
     }
+
 }

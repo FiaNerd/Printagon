@@ -21,11 +21,11 @@ namespace Printagon.Api.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Roll?> GetRollByIdAsync(Guid rollId)
+        public async Task<Roll?> GetRollByNumberAsync(int rollNumber)
         {
             return await _context.Rolls
                 .Include(r => r.OrderRolls)
-                .FirstOrDefaultAsync(r => r.Id == rollId);
+                .FirstOrDefaultAsync(r => r.RollNumber == rollNumber);
         }
 
         public async Task<Roll> CreateRollAsync(Roll roll)
@@ -38,7 +38,7 @@ namespace Printagon.Api.Repositories
 
         public async Task<Roll?> UpdateRollAsync(Roll updatedRoll)
         {
-            var existingRoll = await _context.Rolls.FindAsync(updatedRoll.Id);
+            var existingRoll = await _context.Rolls.FindAsync(updatedRoll.RollNumber);
 
             if (existingRoll == null)
             {
@@ -57,9 +57,9 @@ namespace Printagon.Api.Repositories
             return existingRoll;
         }
 
-        public async Task<bool> DeleteRollAsync(Guid rollId)
+        public async Task<bool> DeleteRollAsync(int rollNumber)
         {
-            var roll = await _context.Rolls.FindAsync(rollId);
+            var roll = await _context.Rolls.FindAsync(rollNumber);
 
             if (roll == null)
             {
@@ -73,7 +73,5 @@ namespace Printagon.Api.Repositories
             return true;
 
         }
-
-
     }
 }

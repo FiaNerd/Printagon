@@ -1,17 +1,19 @@
 ﻿using Printagon.Api.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 public class OrderRoll
 {
+    [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    public Guid OrderId { get; set; }
+    public int OrderNumber { get; set; }
 
     [JsonIgnore]
     public Order Order { get; set; } = null!;
 
-    public Guid RollId { get; set; }
+    public int RollNumber { get; set; }
 
     [JsonIgnore]
     public Roll Roll { get; set; } = null!;

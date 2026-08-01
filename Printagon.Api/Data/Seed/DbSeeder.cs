@@ -15,8 +15,8 @@ namespace Printagon.Api.Data.Seed
             // ----------- ORDERS -----------
             var order1 = new Order
             {
-                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                OrderNumber = 123,
+                Id = Guid.NewGuid(),
+                OrderNumber = 1111,
                 JobName = "Ica",
                 PaperType = "Holmen View HS",
                 PaperGramWeight = 53,
@@ -27,8 +27,8 @@ namespace Printagon.Api.Data.Seed
 
             var order2 = new Order
             {
-                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-                OrderNumber = 234,
+                Id = Guid.NewGuid(),
+                OrderNumber = 2222,
                 JobName = "Hemmets Journal",
                 PaperType = "Skogh papper",
                 PaperGramWeight = 45,
@@ -40,7 +40,7 @@ namespace Printagon.Api.Data.Seed
             // ----------- ROLLS -----------
             var roll1 = new Roll
             {
-                Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Id = Guid.NewGuid(),
                 RollNumber = 1,
                 RollWeight = 998,
                 RollWeightLeftOver = 0,
@@ -49,7 +49,7 @@ namespace Printagon.Api.Data.Seed
 
             var roll2 = new Roll
             {
-                Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                Id = Guid.NewGuid(),
                 RollNumber = 2,
                 RollWeight = 1000,
                 RollWeightLeftOver = 0,
@@ -58,7 +58,7 @@ namespace Printagon.Api.Data.Seed
 
             var roll3 = new Roll
             {
-                Id = Guid.Parse("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"),
+                Id = Guid.NewGuid(),
                 RollNumber = 3,
                 RollWeight = 1000,
                 RollWeightLeftOver = 0,
@@ -67,7 +67,7 @@ namespace Printagon.Api.Data.Seed
 
             var roll4 = new Roll
             {
-                Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+                Id = Guid.NewGuid(),
                 RollNumber = 4,
                 RollWeight = 978,
                 RollWeightLeftOver = 0,
@@ -79,13 +79,13 @@ namespace Printagon.Api.Data.Seed
             {
                 return new OrderRoll
                 {
-                    Order = order,
-                    Roll = roll,
+                    Id = Guid.NewGuid(),
+                    OrderNumber = order.OrderNumber,
+                    RollNumber = roll.RollNumber,
 
                     IntakeWeight = intake,
                     OutputWeight = output,
 
-                    // ALWAYS copy paper from ORDER
                     PaperType = order.PaperType,
                     PaperGramWeight = order.PaperGramWeight,
                     PaperWidth = order.PaperWidth,

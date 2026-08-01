@@ -2,15 +2,11 @@
 
 public interface IOrderRollService
 {
-    Task<IEnumerable<OrderRollResponseDto>> GetAllByOrderIdAsync(Guid orderId);
+    Task<IEnumerable<OrderRollResponseDto>> GetAllByOrderNumberAsync(int orderNumber);
+    Task<OrderRollResponseDto?> GetByIdAsync(Guid id);
+    Task<OrderRollResponseDto?> GetByOrderAndRollAsync(int orderNumber, int rollNumber);
 
-    Task<OrderRollResponseDto?> GetByIdAsync(Guid orderRollId);
-
-    Task<OrderRollResponseDto?> GetByOrderAndRollAsync(Guid orderId, Guid rollId);
-
-    Task<OrderRollResponseDto> AddAsync(Guid orderId, OrderRollCreateDto dto);
-
+    Task<OrderRollResponseDto> AddAsync(int orderNumber, OrderRollCreateDto dto);
     Task<OrderRollResponseDto?> UpdateAsync(Guid id, OrderRollUpdateDto dto);
-
     Task<bool> DeleteAsync(Guid id);
 }

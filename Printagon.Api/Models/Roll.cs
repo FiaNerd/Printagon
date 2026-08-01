@@ -1,14 +1,16 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Printagon.Api.Models
 {
     public class Roll
     {
-        public Guid Id { get; set; }
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public int RollNumber { get; set; }
         public string? PaperType { get; set; }
         public int? PaperGramWeight { get; set; }
         public int? PaperWidth { get; set; }
-        public int RollNumber { get; set; }
         public int RollWeight { get; set; }
         public int? RollWeightLeftOver { get; set; }
 

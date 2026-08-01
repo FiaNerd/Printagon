@@ -13,9 +13,9 @@ namespace Printagon.Api.Services
             _orderRepository = orderRepository;
         }
 
-        public async Task<OrderResponseDto?> GetOrderByIdAsync(Guid orderId)
+        public async Task<OrderResponseDto?> GetOrderByIdAsync(int orderNumber)
         {
-            var order = await _orderRepository.GetOrderByIdAsync(orderId);
+            var order = await _orderRepository.GetOrderByNumberAsync(orderNumber);
 
             if (order == null)
             { 
@@ -24,7 +24,6 @@ namespace Printagon.Api.Services
             
             var result = new OrderResponseDto
             {
-                Id = order.Id,
                 OrderNumber = order.OrderNumber,
                 JobName = order.JobName,
                 YearlyNumber = order.YearlyNumber,
@@ -44,7 +43,6 @@ namespace Printagon.Api.Services
 
             var result = order.Select(o => new OrderResponseDto
             {
-                Id = o.Id,
                 OrderNumber = o.OrderNumber,
                 JobName = o.JobName,
                 YearlyNumber = o.YearlyNumber,
@@ -63,7 +61,6 @@ namespace Printagon.Api.Services
         {
            var order  = new Order
            {
-                Id = Guid.NewGuid(),
                 OrderNumber = orderCreateDto.OrderNumber,
                 JobName = orderCreateDto.JobName,
                 YearlyNumber = orderCreateDto.YearlyNumber,
@@ -75,11 +72,10 @@ namespace Printagon.Api.Services
                 CreatedAt = DateTime.UtcNow
            };
 
-            var createdOrder = await _orderRepository.CreateOrderAsync(order);
+            var createdOrder = await _orderRepository.CreateOrderByNumberAsync(order);
 
             var result = new OrderResponseDto
             {
-                Id = createdOrder.Id,
                 OrderNumber = createdOrder.OrderNumber,
                 JobName = createdOrder.JobName,
                 YearlyNumber = createdOrder.YearlyNumber,
@@ -94,9 +90,9 @@ namespace Printagon.Api.Services
             return result;
         }
 
-        public async Task<OrderResponseDto?> UpdateOrderAsync(Guid orderId, OrderUpdateDto orderUpdateDto)
+        public async Task<OrderResponseDto?> UpdateOrderAsync(int OrderNumber, OrderUpdateDto orderUpdateDto)
         {
-            var existingOrder = await _orderRepository.GetOrderByIdAsync(orderId);
+            var existingOrder = await _orderRepository.GetOrderByNumberAsync(OrderNumber);
 
             if(existingOrder == null)
             {
@@ -111,11 +107,10 @@ namespace Printagon.Api.Services
             existingOrder.OrderStatus = orderUpdateDto.OrderStatus;
             existingOrder.Comment = orderUpdateDto.Comment;
 
-            var updatedOrder = await _orderRepository.UpdateOrderAsync(orderId, existingOrder);
+            var updatedOrder = await _orderRepository.UpdateOrderAsync(OrderNumber, existingOrder);
 
             var result = new OrderResponseDto
             {
-                Id = updatedOrder.Id,
                 OrderNumber = updatedOrder.OrderNumber,
                 JobName = updatedOrder.JobName,
                 YearlyNumber = updatedOrder.YearlyNumber,
@@ -131,9 +126,9 @@ namespace Printagon.Api.Services
         }
 
 
-        public async Task<bool> DeleteOrderAsync(Guid orderId)
+        public async Task<bool> DeleteOrderAsync(int orderNumber)
         {
-            var deleteOrder = await _orderRepository.DeleteOrderAsync(orderId);
+            var deleteOrder = await _orderRepository.DeleteOrderAsync(orderNumber);
 
             return deleteOrder;
         }

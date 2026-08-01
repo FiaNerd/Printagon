@@ -13,13 +13,6 @@ namespace Printagon.Api.Repositories
         {
             _context = context;
         }
-        public async Task<Order?> GetOrderByIdAsync(Guid orderId)
-        {
-           return await _context.Orders
-            .Include(o => o.OrderRolls)
-            .ThenInclude(or => or.Roll)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
-        }
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
@@ -27,8 +20,15 @@ namespace Printagon.Api.Repositories
                 .Include(o => o.OrderRolls)
             .ToListAsync();
         }
+        public async Task<Order?> GetOrderByNumberAsync(int orderNumber)
+        {
+           return await _context.Orders
+            .Include(o => o.OrderRolls)
+            .ThenInclude(or => or.Roll)
+            .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+        }
 
-        public async Task<Order> CreateOrderAsync(Order order)
+        public async Task<Order> CreateOrderByNumberAsync(Order order)
         {
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
@@ -36,12 +36,11 @@ namespace Printagon.Api.Repositories
             return order;
         }
 
-        public async Task<Order?> UpdateOrderAsync(Guid orderId, Order order)
+        public async Task<Order?> UpdateOrderAsync(int orderNumber, Order order)
         {
             var existingOrder = await _context.Orders
                 .Include(o => o.OrderRolls)
-                .FirstOrDefaultAsync(o => o.Id == orderId);
-
+                .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
             if (existingOrder == null) 
             { 
                 return null; 
@@ -61,9 +60,9 @@ namespace Printagon.Api.Repositories
             return existingOrder;
         }
 
-        public async Task<bool> DeleteOrderAsync(Guid orderId)
+        public async Task<bool> DeleteOrderAsync(int orderNumber)
         {
-            var order = await _context.Orders.FindAsync(orderId);
+            var order = await _context.Orders.FindAsync(orderNumber);
 
             if (order == null)
             {
@@ -76,5 +75,6 @@ namespace Printagon.Api.Repositories
 
             return true; 
         }
+
     }
 }

@@ -1,172 +1,139 @@
-﻿using Printagon.Api.DTOs.Roll;
+﻿
 using Printagon.Api.Models;
 using Printagon.Api.Repositories.Interfaces;
 using Printagon.Api.Services.Interfaces;
 
-namespace Printagon.Api.Services
+public class RollService : IRollService
 {
-    public class RollService : IRollService
+    private readonly IRollRepository _rollRepo;
+    private readonly IOrderRepository _orderRepo;
+
+    public RollService(IRollRepository rollRepo, IOrderRepository orderRepo)
     {
-        private readonly IRollRepository _rollRepo;
-        private readonly IOrderRepository _orderRepo;
+        _rollRepo = rollRepo;
+        _orderRepo = orderRepo;
+    }
 
-        public RollService(IRollRepository rollRepo, IOrderRepository orderRepo)
+    public async Task<IEnumerable<RollResponseDto>> GetAllRollsAsync()
+    {
+        var rolls = await _rollRepo.GetAllRollsAsync();
+
+        return rolls.Select(r => new RollResponseDto
         {
-            _rollRepo = rollRepo;
-            _orderRepo = orderRepo;
-        }
+            RollNumber = r.RollNumber,
+            PaperType = r.PaperType,
+            PaperGramWeight = r.PaperGramWeight,
+            PaperWidth = r.PaperWidth,
+            RollWeight = r.RollWeight,
+            RollWeightLeftOver = r.RollWeightLeftOver,
+            Comment = r.Comment,
+            CreatedBy = r.CreatedBy,
+            CreatedAt = r.CreatedAt
+        });
+    }
 
-            public async Task<IEnumerable<RollResponseDto>> GetAllRollsAsync()
-            {
-                var rolls = await _rollRepo.GetAllRollsAsync();
+    public async Task<RollResponseDto?> GetRollByNumberAsync(int rollNumber)
+    {
+        var roll = await _rollRepo.GetRollByNumberAsync(rollNumber);
 
-                    return rolls.Select(r => new RollResponseDto
-                    {
-                        Id = r.Id,
-                        RollNumber = r.RollNumber,
-                        PaperType = r.PaperType,
-                        PaperGramWeight = r.PaperGramWeight,
-                        PaperWidth = r.PaperWidth,
-                        RollWeight = r.RollWeight,
-                        RollWeightLeftOver = r.RollWeightLeftOver,
-                        Comment = r.Comment,
-                        CreatedBy = r.CreatedBy,
-                        CreatedAt = r.CreatedAt
-                    });
-                }
+        if (roll == null)
+            throw new KeyNotFoundException($"Roll with ID {rollNumber} not found.");
 
-        public async Task<RollResponseDto?> GetRollByIdAsync(Guid rollId)
+        return new RollResponseDto
         {
-           var roll = await _rollRepo.GetRollByIdAsync(rollId);
+            RollNumber = roll.RollNumber,
+            PaperType = roll.PaperType,
+            PaperGramWeight = roll.PaperGramWeight,
+            PaperWidth = roll.PaperWidth,
+            RollWeight = roll.RollWeight,
+            RollWeightLeftOver = roll.RollWeightLeftOver,
+            Comment = roll.Comment,
+            CreatedBy = roll.CreatedBy,
+            CreatedAt = roll.CreatedAt
+        };
+    }
 
-            if (roll == null)
-            { 
-                throw new KeyNotFoundException($"Roll with ID {rollId} not found.");
-            }
+    public async Task<RollResponseDto> CreateRollAsync(int orderNumber, RollCreateDto roll)
+    {
+        var order = await _orderRepo.GetOrderByNumberAsync(orderNumber);
 
-            var rollResponse = new RollResponseDto
-            {
-                Id = roll.Id,
-                RollNumber = roll.RollNumber,
-                PaperType = roll.PaperType,
-                PaperGramWeight = roll.PaperGramWeight,
-                PaperWidth = roll.PaperWidth,
-                RollWeight = roll.RollWeight,
-                RollWeightLeftOver = roll.RollWeightLeftOver,
-                Comment = roll.Comment,
-                CreatedBy = null,
-                CreatedAt = roll.CreatedAt
-            };
+        if (order == null)
+            throw new KeyNotFoundException($"Order with ID {orderNumber} not found.");
 
-            return rollResponse;
-        }
-
-        public async Task<RollResponseDto> CreateRollAsync(Guid orderId, RollCreateDto roll)
+        var newRoll = new Roll
         {
-            var order = await _orderRepo.GetOrderByIdAsync(orderId);
-            
-            if (order == null)
-            {
-                throw new KeyNotFoundException($"Order with ID {orderId} not found.");
-            }
+            RollNumber = roll.RollNumber,
+            RollWeight = roll.RollWeight,
+            RollWeightLeftOver = roll.RollWeightLeftOver,
+            Comment = roll.Comment,
 
-            var newRoll = new Roll
-            {
-                Id = Guid.NewGuid(),
-                RollNumber = roll.RollNumber,
-                RollWeight = roll.RollWeight,
-                RollWeightLeftOver = roll.RollWeightLeftOver,
-                Comment = roll.Comment,
+            PaperType = roll.PaperTypeOverride ?? order.PaperType,
+            PaperGramWeight = roll.PaperGramWeightOverride ?? order.PaperGramWeight,
+            PaperWidth = roll.RollWidthOverride ?? order.PaperWidth,
 
-                PaperType = roll.PaperTypeOverride ?? order.PaperType,
-                PaperGramWeight = roll.PaperGramWeightOverride ?? order.PaperGramWeight,
-                PaperWidth = roll.RollWidthOverride ?? order.PaperWidth,
+            CreatedBy = roll.CreatedBy,
+            CreatedAt = DateTime.UtcNow
+        };
 
-                CreatedAt = DateTime.UtcNow
-            };
+        var createdRoll = await _rollRepo.CreateRollAsync(newRoll);
 
-            var createdRoll = await _rollRepo.CreateRollAsync(newRoll);
-
-            var rollResponse = new RollResponseDto
-            {
-                Id = newRoll.Id,
-                RollNumber = newRoll.RollNumber,
-                PaperType = newRoll.PaperType,
-                PaperGramWeight = newRoll.PaperGramWeight,
-                PaperWidth = newRoll.PaperWidth,
-                RollWeight = newRoll.RollWeight,
-                RollWeightLeftOver = newRoll.RollWeightLeftOver,
-                Comment = newRoll.Comment,
-                CreatedBy = null,
-                CreatedAt = newRoll.CreatedAt
-            };
-
-            return rollResponse;
-        }
-
-      
-        public async Task<RollResponseDto?> UpdateRollAsync(Guid orderId, Guid rollId, RollUpdateDto updatedRoll)
+        return new RollResponseDto
         {
-            var order = await _orderRepo.GetOrderByIdAsync(orderId);
+            RollNumber = createdRoll.RollNumber,
+            PaperType = createdRoll.PaperType,
+            PaperGramWeight = createdRoll.PaperGramWeight,
+            PaperWidth = createdRoll.PaperWidth,
+            RollWeight = createdRoll.RollWeight,
+            RollWeightLeftOver = createdRoll.RollWeightLeftOver,
+            Comment = createdRoll.Comment,
+            CreatedBy = createdRoll.CreatedBy,
+            CreatedAt = createdRoll.CreatedAt
+        };
+    }
 
-            if (order == null)
-            {
-                throw new KeyNotFoundException($"Order with ID {orderId} not found.");
-            }
+    public async Task<RollResponseDto?> UpdateRollAsync(int orderNumber, int rollNumber, RollUpdateDto updatedRoll)
+    {
+        var order = await _orderRepo.GetOrderByNumberAsync(orderNumber);
 
-            var existingRoll = await _rollRepo.GetRollByIdAsync(rollId);
+        if (order == null)
+            throw new KeyNotFoundException($"Order with ID {orderNumber} not found.");
 
-            if(existingRoll == null) 
-            { 
-                throw new KeyNotFoundException($"Roll with ID {rollId} not found.");
-            }
+        var existingRoll = await _rollRepo.GetRollByNumberAsync(rollNumber);
 
-            if (existingRoll.Id != orderId)
-            { 
-                throw new InvalidOperationException($"Roll with ID {rollId} does not belong to Order with ID {orderId}.");
-            }
+        if (existingRoll == null)
+            throw new KeyNotFoundException($"Roll with ID {rollNumber} not found.");
 
-            existingRoll.RollNumber = updatedRoll.RollNumber;
-            existingRoll.RollWeight = updatedRoll.RollWeight;
-            existingRoll.RollWeightLeftOver = updatedRoll.RollWeightLeftOver;
-            existingRoll.Comment = updatedRoll.Comment;
+        existingRoll.RollWeight = updatedRoll.RollWeight;
+        existingRoll.RollWeightLeftOver = updatedRoll.RollWeightLeftOver;
+        existingRoll.Comment = updatedRoll.Comment;
 
-            existingRoll.PaperType = updatedRoll.PaperType ?? existingRoll.PaperType;
-            existingRoll.PaperGramWeight = updatedRoll.PaperGramWeight ?? existingRoll.PaperGramWeight;
-            existingRoll.PaperWidth = updatedRoll.PaperWidth ?? existingRoll.PaperWidth;
+        existingRoll.PaperType = updatedRoll.PaperType ?? existingRoll.PaperType;
+        existingRoll.PaperGramWeight = updatedRoll.PaperGramWeight ?? existingRoll.PaperGramWeight;
+        existingRoll.PaperWidth = updatedRoll.PaperWidth ?? existingRoll.PaperWidth;
 
+        var updated = await _rollRepo.UpdateRollAsync(existingRoll);
 
-            var updated = await _rollRepo.UpdateRollAsync(existingRoll);
-
-           var newResponse = new RollResponseDto
-            {
-                Id = updated.Id,
-                RollNumber = updated.RollNumber,
-                PaperType = updated.PaperType,
-                PaperGramWeight = updated.PaperGramWeight,
-                PaperWidth = updated.PaperWidth,
-                RollWeight = updated.RollWeight,
-                RollWeightLeftOver = updated.RollWeightLeftOver,
-                Comment = updated.Comment,
-                CreatedBy = null,
-                CreatedAt = updated.CreatedAt
-            };
-
-            return newResponse;
-
-        }
-
-        public async Task DeleteRollAsync(Guid rollId)
+        return new RollResponseDto
         {
-            var roll = await _rollRepo.GetRollByIdAsync(rollId);
+            RollNumber = updated.RollNumber,
+            PaperType = updated.PaperType,
+            PaperGramWeight = updated.PaperGramWeight,
+            PaperWidth = updated.PaperWidth,
+            RollWeight = updated.RollWeight,
+            RollWeightLeftOver = updated.RollWeightLeftOver,
+            Comment = updated.Comment,
+            CreatedBy = updated.CreatedBy,
+            CreatedAt = updated.CreatedAt
+        };
+    }
 
-            if (roll == null)
-            {
-                throw new KeyNotFoundException($"Roll with ID {rollId} not found.");
-            }
-             
-            await _rollRepo.DeleteRollAsync(rollId);
-        }
+    public async Task DeleteRollAsync(int rollNumber)
+    {
+        var roll = await _rollRepo.GetRollByNumberAsync(rollNumber);
 
+        if (roll == null)
+            throw new KeyNotFoundException($"Roll with ID {rollNumber} not found.");
+
+        await _rollRepo.DeleteRollAsync(rollNumber);
     }
 }

@@ -3,8 +3,8 @@
     public class OrderRollResponseDto
     {
         public Guid Id { get; set; }
-        public Guid OrderId { get; set; }
-        public Guid RollId { get; set; }
+        public int OrderNumber { get; set; }
+        public int RollNumber { get; set; }
 
         public int IntakeWeight { get; set; }
         public int? OutputWeight { get; set; }

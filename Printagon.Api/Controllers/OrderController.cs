@@ -22,12 +22,12 @@ namespace Printagon.Api.Controllers
 
             return Ok(orders);
         }
-        // GET: api/orders/{orderId}
+        // GET: api/orders/{OrderNumber}
 
-        [HttpGet("{orderId}")]
-        public async Task<IActionResult> GetOrderById(Guid orderId)
+        [HttpGet("{orderNumber}")]
+        public async Task<IActionResult> GetOrderById(int orderNumber)
         {
-            var order = await _orderService.GetOrderByIdAsync(orderId);
+            var order = await _orderService.GetOrderByIdAsync(orderNumber);
 
             if (order == null)
             { 
@@ -43,15 +43,15 @@ namespace Printagon.Api.Controllers
         {
             var createdOrder = await _orderService.CreateOrderAsync(order);
 
-            return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrder.Id }, createdOrder);
+            return CreatedAtAction(nameof(GetOrderById), new { OrderNumber = createdOrder.Id }, createdOrder);
         }
 
-        // PUT: api/orders/{orderId}
+        // PUT: api/orders/{OrderNumber}
 
-        [HttpPut("{orderId}")]
-        public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] OrderUpdateDto order)
+        [HttpPut("{orderNumber}")]
+        public async Task<IActionResult> UpdateOrder(int orderNumber, [FromBody] OrderUpdateDto order)
         {
-            var updaterOrder = await _orderService.UpdateOrderAsync(orderId, order);
+            var updaterOrder = await _orderService.UpdateOrderAsync(orderNumber, order);
 
             if (updaterOrder == null)
             {
@@ -61,10 +61,10 @@ namespace Printagon.Api.Controllers
             return Ok(updaterOrder);
         }
 
-        [HttpDelete("{orderId}")]
-        public async Task<IActionResult> DeleteOrder(Guid orderId)
+        [HttpDelete("{orderNumber}")]
+        public async Task<IActionResult> DeleteOrder(int orderNumber)
         {
-            var deleteOrder = await _orderService.DeleteOrderAsync(orderId);
+            var deleteOrder = await _orderService.DeleteOrderAsync(orderNumber);
 
             if(deleteOrder == false)
             {

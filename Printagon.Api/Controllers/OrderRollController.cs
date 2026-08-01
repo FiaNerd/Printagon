@@ -14,20 +14,19 @@ namespace Printagon.Api.Controllers
             _orderRollService = orderRollService;
         }
 
-        // GET: /api/orders/{orderId}/order-rolls
-        [HttpGet("{orderId}/order-rolls")]
-        public async Task<IActionResult> GetAllByOrderIdAsync(Guid orderId)
+        // GET: /api/orders/{orderNumber}/order-rolls
+        [HttpGet("{orderNumber}/order-rolls")]
+        public async Task<IActionResult> GetAllByOrderNumberAsync(int orderNumber)
         {
-            var orderRolls = await _orderRollService.GetAllByOrderIdAsync(orderId);
+            var orderRolls = await _orderRollService.GetAllByOrderNumberAsync(orderNumber);
             return Ok(orderRolls);
         }
 
-        // GET: /api/orders/{orderId}/rolls/{rollId}
-        // IMPORTANT: Named route so CreatedAtRoute can find it
-        [HttpGet("{orderId}/rolls/{rollId}", Name = "GetOrderRollById")]
-        public async Task<IActionResult> GetByOrderAndRollAsync(Guid orderId, Guid rollId)
+        // GET: /api/orders/{orderNumber}/rolls/{rollNumber}
+        [HttpGet("{orderNumber}/rolls/{rollNumber}", Name = "GetOrderRollById")]
+        public async Task<IActionResult> GetByOrderAndRollAsync(int orderNumber, int rollNumber)
         {
-            var orderRoll = await _orderRollService.GetByOrderAndRollAsync(orderId, rollId);
+            var orderRoll = await _orderRollService.GetByOrderAndRollAsync(orderNumber, rollNumber);
 
             if (orderRoll == null)
                 return NotFound();
@@ -35,15 +34,15 @@ namespace Printagon.Api.Controllers
             return Ok(orderRoll);
         }
 
-        // POST: /api/orders/{orderId}/order-rolls
-        [HttpPost("{orderId}/order-rolls")]
-        public async Task<IActionResult> AddAsync(Guid orderId, [FromBody] OrderRollCreateDto dto)
+        // POST: /api/orders/{orderNumber}/order-rolls
+        [HttpPost("{orderNumber}/order-rolls")]
+        public async Task<IActionResult> AddAsync(int orderNumber, [FromBody] OrderRollCreateDto dto)
         {
-            var created = await _orderRollService.AddAsync(orderId, dto);
+            var created = await _orderRollService.AddAsync(orderNumber, dto);
 
             return CreatedAtRoute(
                 "GetOrderRollById",
-                new { orderId = orderId, rollId = created.RollId },
+                new { orderNumber = orderNumber, rollNumber = created.RollNumber },
                 created
             );
         }

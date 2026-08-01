@@ -1,6 +1,6 @@
 ﻿public class OrderRollCreateDto
 {
-    public Guid RollId { get; set; }
+    public int RollNumber { get; set; }
 
     public int IntakeWeight { get; set; }
 

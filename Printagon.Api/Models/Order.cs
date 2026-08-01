@@ -1,11 +1,13 @@
 ﻿using Printagon.Api.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Printagon.Api.Models
 {
     public class Order
     {
-            public Guid Id { get; set; }
+            [Key]
+            public Guid Id { get; set; } = Guid.NewGuid();
             public int OrderNumber { get; set; }
             public string JobName { get; set; } = string.Empty;
             public int? YearlyNumber { get; set; }
