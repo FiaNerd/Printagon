@@ -46,5 +46,16 @@ namespace Printagon.Api.Controllers
                 created
             );
         }
+
+        [HttpPut("/api/order-rolls/{id:guid}")]
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] OrderRollUpdateDto dto)
+        {
+            var updated = await _orderRollService.UpdateAsync(id, dto);
+            if (updated == null)
+                return NotFound();
+            return Ok(updated);
+        }
+
+
     }
 }
