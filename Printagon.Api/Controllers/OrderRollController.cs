@@ -29,7 +29,9 @@ namespace Printagon.Api.Controllers
             var orderRoll = await _orderRollService.GetByOrderAndRollAsync(orderNumber, rollNumber);
 
             if (orderRoll == null)
+            {
                 return NotFound();
+            }
 
             return Ok(orderRoll);
         }
